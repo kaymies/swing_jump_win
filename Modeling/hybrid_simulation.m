@@ -22,15 +22,15 @@ function [tout, zout, uout, indices] = hybrid_simulation(z0,ctrl,p,tspan)
     iphase_list = 1;
     for i = 1:num_step-1
         t = tout(i);
-        
+        %%% SG Edits
         iphase = iphase_list(i);
         [dz, u] = dynamics_continuous(t,zout(:,i),ctrl,p,iphase);
         zout(:,i+1) = zout(:,i) + dz*dt;
-        zout(3:4,i+1) = discrete_impact_contact(zout(:,i+1), p);
-        zout(1:2,i+1) = zout(1:2,i) + zout(3:4, i+1)*dt;
+        zout(5:8,i+1) = discrete_impact_contact(zout(:,i+1), p);
+        zout(1:4,i+1) = zout(1:4,i) + zout(5:8, i+1)*dt;
         uout(:,i+1) = u; 
-        
-        if(zout(1, i+1) > 0 && iphase == 1) % jump
+        %%%% END
+        if(zout(1,i+1) > 0 && iphase == 1) % jump
             iphase = 2;
         elseif(zout(1,i+1) < 0 && iphase == 2) % max height
             iphase = 3;
@@ -69,24 +69,36 @@ end
 
 %% Continuous dynamics
 function [dz, u] = dynamics_continuous(t,z,ctrl,p,iphase)
-
+    %UPDATED - SG
+    % 03 Nov 2022 - updated dz to be 8x1 vector instead of 4x1 - SG
     u = control_laws(t,z,ctrl,iphase);  % get controls at this instant
     
     A = A_jumping_leg(z,p);                 % get full A matrix
     b = b_jumping_leg(z,u,0,p);               % get full b vector
     
     x = A\b;                % solve system for accelerations (and possibly forces)
-    dz(1:2,1) = z(3:4); % assign velocities to time derivative of state vector
-    dz(3:4,1) = x(1:2);   % assign accelerations to time derivative of state vector
+    dz(1:4,1) = z(5:8);     % assign velocities to time derivative of state vector
+    dz(5:8,1) = x(1:4);     % assign accelerations to time derivative of state vector
 end
 
 %% Control
 function u = control_laws(t,z,ctrl,iphase)
-
+    %UPDATED - SG
+    %03 Nov 2022 - adjusted areal control so that PD is applied to leg, but
+    %arm control is preserved. Adjusted in-ground control to output leg and
+    %arm control curves.
     if iphase == 1
-        u = BezierCurve(ctrl.T, t/ctrl.tf);
+        %Ankle control, irrelevant
+        taua = 0;
+        %Leg control, Bezier curve on torque
+        tauh = BezierCurve(ctrl.Th, t/ctrl.tfh); %EDIT LATER TO MATCH CONTROL LAW
+        %Arm control
+        taus = BezierCurve(ctrl.Ts, t/ctrl.tfs); %EDIT LATER TO MATCH CONTROL LAW
+
+        %Create control vector
+        u = [taua; tauh; taus];
     else
-        
+        %Updated - leg in PD control, shoulder still ground phase contol - NOT EDITED - SG
         % PD Control in flight
         th = z(2,:);            % leg angle
         dth = z(4,:);           % leg angular velocity
