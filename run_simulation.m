@@ -22,16 +22,16 @@ ctrl.T = [0.5 0.5 0.5];                               % control values
 
 x = [tf, ctrl.tf, ctrl.T];
 % % setup and solve nonlinear programming problem
-problem.objective = @(x) objective(x,z0,p);     % create anonymous function that returns objective
-problem.nonlcon = @(x) constraints(x,z0,p);     % create anonymous function that returns nonlinear constraints
-problem.x0 = [tf ctrl.tf ctrl.T];                   % initial guess for decision variables
-problem.lb = [.4 .1 -2*ones(size(ctrl.T))];     % lower bound on decision variables
-problem.ub = [1  1   2*ones(size(ctrl.T))];     % upper bound on decision variables
-problem.Aineq = []; problem.bineq = [];         % no linear inequality constraints
-problem.Aeq = []; problem.beq = [];             % no linear equality constraints
-problem.options = optimset('Display','iter');   % set options
-problem.solver = 'fmincon';                     % required
-x = fmincon(problem);                           % solve nonlinear programming problem
+% problem.objective = @(x) objective(x,z0,p);     % create anonymous function that returns objective
+% problem.nonlcon = @(x) constraints(x,z0,p);     % create anonymous function that returns nonlinear constraints
+% problem.x0 = [tf ctrl.tf ctrl.T];                   % initial guess for decision variables
+% problem.lb = [.4 .1 -2*ones(size(ctrl.T))];     % lower bound on decision variables
+% problem.ub = [1  1   2*ones(size(ctrl.T))];     % upper bound on decision variables
+% problem.Aineq = []; problem.bineq = [];         % no linear inequality constraints
+% problem.Aeq = []; problem.beq = [];             % no linear equality constraints
+% problem.options = optimset('Display','iter');   % set options
+% problem.solver = 'fmincon';                     % required
+% x = fmincon(problem);                           % solve nonlinear programming problem
 
 % Note that once you've solved the optimization problem, you'll need to 
 % re-define tf, tfc, and ctrl here to reflect your solution.
