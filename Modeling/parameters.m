@@ -1,6 +1,6 @@
 function p = parameters() 
  l0 = 51.52*1e-3;
- l1 = ;
+ l1 = 91*1e-3;
  l2 = ;
  l3 = ;
  l4 = ;
