@@ -98,10 +98,10 @@ function u = control_laws(t,z,ctrl,iphase)
         %Create control vector
         u = [taua; tauh; taus];
     else
-        %Updated - leg in PD control, shoulder still ground phase contol - NOT EDITED - SG
+        %Updated - th and dth as vector of ankle, hip, shoulder angles - KS
         % PD Control in flight
-        th = z(2,:);            % leg angle
-        dth = z(4,:);           % leg angular velocity
+        th = z(2:4,:);            % leg angle
+        dth = z(6:8,:);           % leg angular velocity
 
         thd = pi/4;             % desired leg angle
         k = 5;                  % stiffness (N/rad)

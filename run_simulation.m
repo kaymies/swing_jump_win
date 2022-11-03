@@ -15,12 +15,18 @@ z0 = [0; pi/6; 0 ;0];                    % set initial state
 % An equation has been added to dynamics_continuous and dynamics_discrete
 % to integrate this new state.
 
+%         tauh = BezierCurve(ctrl.Th, t/ctrl.tfh); %EDIT LATER TO MATCH CONTROL LAW
+%         %Arm control
+%         taus = BezierCurve(ctrl.Ts, t/ctrl.tfs);
+
 % set guess
 tf = 0.5;                                        % simulation final time
-ctrl.tf = 0.5;                                  % control time points
-ctrl.T = [0.5 0.5 0.5];                               % control values
+ctrl.tfh = 0.5;                                  % control time points for hip - updated KS
+ctrl.Th = [0.5 0.5 0.5];                               % control values for hip - updated KS
+ctrl.tfs = 0.5;                                  % control time points for shoulder - updated KS
+ctrl.Ts = [0.5 0.5 0.5];                               % control values for shoulder - updated KS
 
-x = [tf, ctrl.tf, ctrl.T];
+% x = [tf, ctrl.tf, ctrl.T];
 % % setup and solve nonlinear programming problem
 % problem.objective = @(x) objective(x,z0,p);     % create anonymous function that returns objective
 % problem.nonlcon = @(x) constraints(x,z0,p);     % create anonymous function that returns nonlinear constraints
@@ -37,38 +43,38 @@ x = [tf, ctrl.tf, ctrl.T];
 % re-define tf, tfc, and ctrl here to reflect your solution.
 
 %Extract solved parameters
-tf = x(1);
-ctrl.tf = x(2);
-ctrl.T = x(3:end);
+% tf = x(1);
+% ctrl.tf = x(2);
+% ctrl.T = x(3:end);
 
 [t, z, u, indices] = hybrid_simulation(z0,ctrl,p,[0 tf]); % run simulation
 
 %% Plot COM for your submissions
-figure(1)
-COM = COM_jumping_leg(z,p);
-max(COM(2,:))
-plot(t,COM(2,:))
-xlabel('time (s)')
-ylabel('CoM Height (m)')
-title('Center of Mass Trajectory')
+% figure(1)
+% COM = COM_jumping_leg(z,p);
+% max(COM(2,:))
+% plot(t,COM(2,:))
+% xlabel('time (s)')
+% ylabel('CoM Height (m)')
+% title('Center of Mass Trajectory')
 
-figure(2)  % control input profile
-ctrl_t = linspace(0, ctrl.tf, 50);
-ctrl_pt_t = linspace(0, ctrl.tf, length(ctrl.T));
-n = length(ctrl_t);
-ctrl_input = zeros(1,n);
-
-for i=1:n
-    ctrl_input(i) = BezierCurve(x(3:end),ctrl_t(i)/ctrl.tf);
-end
-
-hold on
-plot(ctrl_t, ctrl_input);
-plot(ctrl_pt_t, x(3:end), 'o');
-hold off
-xlabel('time (s)')
-ylabel('torque (Nm)')
-title('Control Input Trajectory')
+% figure(2)  % control input profile
+% ctrl_t = linspace(0, ctrl.tf, 50);
+% ctrl_pt_t = linspace(0, ctrl.tf, length(ctrl.T));
+% n = length(ctrl_t);
+% ctrl_input = zeros(1,n);
+% 
+% for i=1:n
+%     ctrl_input(i) = BezierCurve(x(3:end),ctrl_t(i)/ctrl.tf);
+% end
+% 
+% hold on
+% plot(ctrl_t, ctrl_input);
+% plot(ctrl_pt_t, x(3:end), 'o');
+% hold off
+% xlabel('time (s)')
+% ylabel('torque (Nm)')
+% title('Control Input Trajectory')
 %%
 % Run the animation
 figure(3)                          % get the coordinates of the points to animate
