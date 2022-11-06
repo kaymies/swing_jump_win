@@ -19,6 +19,7 @@ dq  = [dy; dtha; dthh; dths];    % first time derivatives
 ddq = [ddy; ddtha; ddthh; ddths];  % second time derivatives
 u   = [taua; tauh; taus];          % control forces and moments
 Fc   = [Fy; Fy2];           % constraint forces and moments
+% Fc   = Fy;           % constraint forces and moments
 p   = [l0; l1; l2; l3; l4;
        c0; c1; c2; c3; c4; 
 	   m0; m1; m2; m3; m4; m5;

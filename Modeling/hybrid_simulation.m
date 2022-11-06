@@ -30,11 +30,11 @@ function [tout, zout, uout, indices] = hybrid_simulation(z0,ctrl,p,tspan)
         zout(1:4,i+1) = zout(1:4,i) + zout(5:8, i+1)*dt;
         uout(:,i+1) = u; 
         %%%% END
-        if(zout(1,i+1) > 0 && iphase == 1) % jump
-            iphase = 2;
-        elseif(zout(1,i+1) < 0 && iphase == 2) % max height
-            iphase = 3;
-        end
+%         if(zout(1,i+1) > 0 && iphase == 1) % jump
+%             iphase = 2;
+%         elseif(zout(1,i+1) < 0 && iphase == 2) % max height
+%             iphase = 3;
+%         end
         iphase_list(i+1) = iphase;
     end
     
@@ -113,8 +113,8 @@ function u = control_laws(t,z,ctrl,iphase)
         dth = z(6:8,:);           % leg angular velocity
 
         thd = pi/4;             % desired leg angle
-        k = 5;                  % stiffness (N/rad)
-        b = .5;                 % damping (N/(rad/s))
+        k = 1;                  % stiffness (N/rad)
+        b = 0.1;                 % damping (N/(rad/s))
 
         u = -k*(th-thd) - b*dth;% apply PD control
         u(1) = -k*(th(1)+thd) - b*dth(1); %Ankle want negative target angle
