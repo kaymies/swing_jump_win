@@ -158,15 +158,7 @@ COM = [rcm(1:2); drcm(1:2)]; % Concatenate x and y coordinates and speeds of cen
 matlabFunction(COM,'file',[directory 'COM_' name],'vars',{z p});
 
 
-% Additional functions - SG
-% Toe parameters
-Jt = jacobian(rt,q);
-Jt = Jt(1:2,1:4);
-vt = ddt(rt);
-matlabFunction(rt(1:2),'file',[directory 'r_toe_' name],'vars',{z p}); %toe position
-matlabFunction(vt(1:2),'file',[directory 'v_toe_' name],'vars',{z p}); %toe velocity
-matlabFunction(Jt,'file',[directory 'J_toe_' name],'vars',{z p}); %Toe Jacobian
+% Functions to get certain point coordinates
 
-%Ankle parameters
-
+get_J_toe = 
 

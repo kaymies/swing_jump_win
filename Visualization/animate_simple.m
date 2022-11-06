@@ -21,7 +21,7 @@ function animate_simple(t,z,p, speed)
 end
 
 function draw_lines(z,p, h_leg)
-    keypoints = keypoints_jumping_leg(z,p);
+    keypoints = keypoints_swing_jump_win(z,p);
     h_leg.XData = keypoints(1,:);
     h_leg.YData = keypoints(2,:);
     drawnow
