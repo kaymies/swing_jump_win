@@ -10,7 +10,7 @@ clear all; close all; clc;
 setpath                                     % add AutoDerived, Modeling, and Visualization folders to Matlab path
 
 p = parameters();                           % get parameters from file
-z0 = [0; pi/6; 0 ;0];                    % set initial state
+z0 = [0; pi/6; 0; 0; 0; 0; 0; 0];                    % set initial state
 % Note: 5th state is the integral of torque squared over time
 % An equation has been added to dynamics_continuous and dynamics_discrete
 % to integrate this new state.

@@ -73,8 +73,8 @@ function [dz, u] = dynamics_continuous(t,z,ctrl,p,iphase)
     % 03 Nov 2022 - updated dz to be 8x1 vector instead of 4x1 - SG
     u = control_laws(t,z,ctrl,iphase);  % get controls at this instant
     
-    A = A_jumping_leg(z,p);                 % get full A matrix
-    b = b_jumping_leg(z,u,0,p);               % get full b vector
+    A = A_swing_jump_win(z,p);                 % get full A matrix
+    b = b_swing_jump_win(z,u,0,p);               % get full b vector
     
     x = A\b;                % solve system for accelerations (and possibly forces)
     dz(1:4,1) = z(5:8);     % assign velocities to time derivative of state vector
