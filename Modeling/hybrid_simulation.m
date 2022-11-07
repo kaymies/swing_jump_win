@@ -18,7 +18,7 @@ function [tout, zout, uout, indices] = hybrid_simulation(z0,ctrl,p,tspan)
     num_step = floor((tend-t0)/dt);
     tout = linspace(t0, tend, num_step);
     zout(:,1) = z0;
-    uout = zeros(1,1);
+    uout = zeros(3,1);
     iphase_list = 1;
     for i = 1:num_step-1
         t = tout(i);
@@ -52,18 +52,35 @@ end
 
 %% Discrete Contact
 function qdot = discrete_impact_contact(z,p)
-    qdot = z(3:4);
-    rE = z(1); 
-    vE = z(3); 
-
-    if(rE<0 && vE < 0)
-      J  = [1, 0];
-      M = A_jumping_leg(z,p);
-      Ainv = inv(M);
+%     qdot = z(5:8);
+%     rE = z(1); 
+%     vE = z(5); 
+% 
+%     if(rE<0 && vE < 0)
+%       J  = [1, 0];
+%       M = A_swing_jump_win(z,p);
+%       Ainv = inv(M);
+%       
+%       lambda_z = 1/(J * Ainv * J.');
+%       F_z = lambda_z*(0 - vE);
+%       qdot = qdot + Ainv*J.'*F_z;
+    qdot = z(5:8);
+    rt = r_toe_swing_jump_win(z,p);
+    rty = rt(2);
+    vt = v_toe_swing_jump_win(z,p);
+    vty = vt(2);
+    
+    if(rty < 0 && vty < 0)
       
-      lambda_z = 1/(J * Ainv * J.');
-      F_z = lambda_z*(0 - vE);
-      qdot = qdot + Ainv*J.'*F_z;
+      M = A_swing_jump_win(z,p);
+      Ainv = inv(M);
+
+      Jt  = J_toe_swing_jump_win(z,p);
+      Jty = Jt(2,:);
+      
+      lambda_z = 1/(Jty * Ainv * (Jty.'));
+      F_y = lambda_z*(0 - vty);
+      qdot = qdot + Ainv*Jty.'*F_y;
     end
 end
 
@@ -73,8 +90,8 @@ function [dz, u] = dynamics_continuous(t,z,ctrl,p,iphase)
     % 03 Nov 2022 - updated dz to be 8x1 vector instead of 4x1 - SG
     u = control_laws(t,z,ctrl,iphase);  % get controls at this instant
     
-    A = A_jumping_leg(z,p);                 % get full A matrix
-    b = b_jumping_leg(z,u,0,p);               % get full b vector
+    A = A_swing_jump_win(z,p);                 % get full A matrix
+    b = b_swing_jump_win(z,u,[0;0],p);               % get full b vector
     
     x = A\b;                % solve system for accelerations (and possibly forces)
     dz(1:4,1) = z(5:8);     % assign velocities to time derivative of state vector

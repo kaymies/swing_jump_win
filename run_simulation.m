@@ -10,7 +10,7 @@ clear all; close all; clc;
 setpath                                     % add AutoDerived, Modeling, and Visualization folders to Matlab path
 
 p = parameters();                           % get parameters from file
-z0 = [0; pi/6; 0 ;0];                    % set initial state
+z0 = [0.4; -pi/6; pi/6; pi/6; 0 ; 0; 0 ;0];                    % set initial state
 % Note: 5th state is the integral of torque squared over time
 % An equation has been added to dynamics_continuous and dynamics_discrete
 % to integrate this new state.
@@ -50,13 +50,13 @@ ctrl.Ts = [0.5 0.5 0.5];                               % control values for shou
 [t, z, u, indices] = hybrid_simulation(z0,ctrl,p,[0 tf]); % run simulation
 
 %% Plot COM for your submissions
-% figure(1)
-% COM = COM_jumping_leg(z,p);
-% max(COM(2,:))
-% plot(t,COM(2,:))
-% xlabel('time (s)')
-% ylabel('CoM Height (m)')
-% title('Center of Mass Trajectory')
+figure(1)
+COM = COM_swing_jump_win(z,p);
+max(COM(2,:))
+plot(t,COM(2,:))
+xlabel('time (s)')
+ylabel('CoM Height (m)')
+title('Center of Mass Trajectory')
 
 % figure(2)  % control input profile
 % ctrl_t = linspace(0, ctrl.tf, 50);
