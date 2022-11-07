@@ -10,7 +10,7 @@ clear all; close all; clc;
 setpath                                     % add AutoDerived, Modeling, and Visualization folders to Matlab path
 
 p = parameters();                           % get parameters from file
-z0 = [0.3; -pi/6; pi/6; pi/2;...
+z0 = [0.1; -pi/6; pi/6; pi/2;...
       0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
 
 % z0 = [0.1; -pi/4; pi/4; pi/2;...
@@ -84,6 +84,6 @@ plot(t,z(2,:));
 %%
 % Run the animation
 figure(3)                          % get the coordinates of the points to animate
-speed = 0.75;                                 % set animation speed
+speed = 1;                                 % set animation speed
 clf                                         % clear fig
 animate_simple(t,z,p,speed)                 % run animation

@@ -108,7 +108,7 @@ V5 = m5*g*dot(rf, jhat);
 QF = F2Q(Fy*jhat,rt) + F2Q(Fy2*jhat,ra);
 Qtaua = 0;
 Qtauh = M2Q(-tauh*khat, -dthh*khat);
-Qtaus = M2Q(taus*khat, dths*khat);
+Qtaus = M2Q(-taus*khat, -dths*khat);
 
 % Sum kinetic energy terms, potential energy terms, and generalized force
 % contributions.
