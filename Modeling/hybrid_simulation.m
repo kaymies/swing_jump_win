@@ -67,12 +67,51 @@ function qdot = discrete_impact_contact(z,p)
       M = A_swing_jump_win(z,p);
       Ainv = inv(M);
 
-      Jt  = J_toe_swing_jump_win(z,p);
-      Jty = Jt(2,:);
+      J  = J_toe_swing_jump_win(z,p);
+      Jy = J(2,:);
       
-      lambda_z = 1/(Jty * Ainv * (Jty.'));
+      lambda_z = 1/(Jy * Ainv * (Jy.'));
       F_y = lambda_z*(0 - vty);
-      qdot = qdot + Ainv*Jty.'*F_y;
+      qdot = qdot + Ainv*Jy.'*F_y;
+    end
+
+    % SG - Add ankle contact - 07 Nov 2022
+    ra = r_ank_swing_jump_win(z,p);
+    ray = ra(2);
+    va = v_ank_swing_jump_win(z,p);
+    vay = va(2);
+    
+    if(ray < 0 && vay < 0)
+      
+      M = A_swing_jump_win(z,p);
+      Ainv = inv(M);
+
+      J  = J_ank_swing_jump_win(z,p);
+      Jy = J(2,:);
+      
+      lambda_z = 1/(Jy * Ainv * (Jy.'));
+      F_y = lambda_z*(0 - vay);
+      qdot = qdot + Ainv*Jy.'*F_y;
+    end
+
+    % SG - Add joint position constraints - 07 Nov 2022
+    
+    % Ankle joint limit angle
+    tha_lim0 = deg2rad(-60); %Minimum angle
+    tha_lim1 = deg2rad(0); %Maximum
+    if z(2) < tha_lim0 && qdot(2) < 0
+        qdot(2) = 0;
+%     elseif z(2) > tha_lim1 && qdot(2) > 0
+%         qdot(2) = 0;
+    end
+
+    % Hip joint limit angle
+    thh_lim0 = deg2rad(180-143); %Minimum angle
+    thh_lim1 = deg2rad(180-106); %Maximum angle
+    if z(3) < thh_lim0 && qdot(3) < 0
+        qdot(3) = 0;
+    elseif z(3) > thh_lim1 && qdot(3) > 0
+        qdot(3) = 0;
     end
 end
 

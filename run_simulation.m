@@ -10,7 +10,7 @@ clear all; close all; clc;
 setpath                                     % add AutoDerived, Modeling, and Visualization folders to Matlab path
 
 p = parameters();                           % get parameters from file
-z0 = [0.036; -pi/6; pi/6; pi/2;...
+z0 = [0.3; -pi/6; pi/6; pi/2;...
       0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
 
 % z0 = [0.1; -pi/4; pi/4; pi/2;...
@@ -21,13 +21,13 @@ z0 = [0.036; -pi/6; pi/6; pi/2;...
 %         taus = BezierCurve(ctrl.Ts, t/ctrl.tfs);
 
 % set guess
-tf = 1;                                        % simulation final time
+tf = 2;                                        % simulation final time
 ctrl.tfh = 1;                                  % control time points for hip - updated KS
-ctrl.Th = [1.5 1.5];                               % control values for hip - updated KS
-% ctrl.Th = [0 0];
+ctrl.Th = [1 1];                               % control values for hip - updated KS
+ctrl.Th = [0 0];
 ctrl.tfs = 1;                                  % control time points for shoulder - updated KS
 ctrl.Ts = [0.1 0.1];                               % control values for shoulder - updated KS
-% ctrl.Ts = [0 0];
+ctrl.Ts = [0 0];
 
 % x = [tf, ctrl.tf, ctrl.T];
 % % setup and solve nonlinear programming problem
@@ -61,6 +61,9 @@ xlabel('time (s)')
 ylabel('CoM Height (m)')
 title('Center of Mass Trajectory')
 
+figure(2)
+plot(t,z(2,:));
+
 % figure(2)  % control input profile
 % ctrl_t = linspace(0, ctrl.tf, 50);
 % ctrl_pt_t = linspace(0, ctrl.tf, length(ctrl.T));
@@ -81,6 +84,6 @@ title('Center of Mass Trajectory')
 %%
 % Run the animation
 figure(3)                          % get the coordinates of the points to animate
-speed = 0.1;                                 % set animation speed
+speed = 0.75;                                 % set animation speed
 clf                                         % clear fig
 animate_simple(t,z,p,speed)                 % run animation

@@ -23,8 +23,8 @@ function p = parameters()
  I4 = 3428.51e-9;
  le1 = l0/2;
  le2 = 41.63*1e-3;
- k = 30; %% TEMPORARY - BALLPARK STIFFNESS FOR RUBBER BAND
- ls0 = 38E-3; %% TEPORARY
+ k = 300; %% TEMPORARY - BALLPARK STIFFNESS FOR RUBBER BAND
+ ls0 = 0; %% TEPORARY
  g = 9.81;
  p   = [l0; l1; l2; l3; l4;
        c0; c1; c2; c3; c4; 

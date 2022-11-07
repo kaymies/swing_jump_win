@@ -6,10 +6,10 @@ function animate_simple(t,z,p, speed)
     h_ground = plot([-1 1],[0 0],'k-','LineWidth',5);
     hold on
     h_leg    = plot([0],[0],'-o',...
-                'LineWidth',3,...
+                'LineWidth',2,...
                 'MarkerEdgeColor','r',...
                 'MarkerFaceColor','r',...
-                'MarkerSize',6); 
+                'MarkerSize',4); 
 
     tic                                             % start counter
     while toc < t(end)/speed                        % while there's real time left
@@ -26,5 +26,5 @@ function draw_lines(z,p, h_leg)
     h_leg.YData = keypoints(2,:);
     drawnow
     axis equal % sets the X:Y aspect ratio 1:1; otherwise things will look stretched
-    axis([-.2 .2 -.2 1])
+    axis([-.2 .2 -.1 0.6])
 end
