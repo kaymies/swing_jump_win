@@ -19,6 +19,7 @@ dq  = [dy; dtha; dthh; dths];    % first time derivatives
 ddq = [ddy; ddtha; ddthh; ddths];  % second time derivatives
 u   = [taua; tauh; taus];          % control forces and moments
 Fc   = [Fy; Fy2];           % constraint forces and moments
+% Fc   = Fy;           % constraint forces and moments
 p   = [l0; l1; l2; l3; l4;
        c0; c1; c2; c3; c4; 
 	   m0; m1; m2; m3; m4; m5;
@@ -156,3 +157,17 @@ matlabFunction(dC,'file',[directory 'dC_' name],'vars',{z u p});
 drcm = ddt(rcm);             % Calculate center of mass velocity vector
 COM = [rcm(1:2); drcm(1:2)]; % Concatenate x and y coordinates and speeds of center of mass in array
 matlabFunction(COM,'file',[directory 'COM_' name],'vars',{z p});
+
+
+% Additional functions - SG
+% Toe parameters
+Jt = jacobian(rt,q);
+Jt = Jt(1:2,1:4);
+vt = ddt(rt);
+matlabFunction(rt(1:2),'file',[directory 'r_toe_' name],'vars',{z p}); %toe position
+matlabFunction(vt(1:2),'file',[directory 'v_toe_' name],'vars',{z p}); %toe velocity
+matlabFunction(Jt,'file',[directory 'J_toe_' name],'vars',{z p}); %Toe Jacobian
+
+%Ankle parameters
+
+
