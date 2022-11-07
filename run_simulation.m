@@ -10,21 +10,24 @@ clear all; close all; clc;
 setpath                                     % add AutoDerived, Modeling, and Visualization folders to Matlab path
 
 p = parameters();                           % get parameters from file
-z0 = [0; pi/6; 0; 0; 0; 0; 0; 0];                    % set initial state
-% Note: 5th state is the integral of torque squared over time
-% An equation has been added to dynamics_continuous and dynamics_discrete
-% to integrate this new state.
+z0 = [0.036; -pi/6; pi/6; pi/2;...
+      0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
+
+% z0 = [0.1; -pi/4; pi/4; pi/2;...
+%       0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
 
 %         tauh = BezierCurve(ctrl.Th, t/ctrl.tfh); %EDIT LATER TO MATCH CONTROL LAW
 %         %Arm control
 %         taus = BezierCurve(ctrl.Ts, t/ctrl.tfs);
 
 % set guess
-tf = 0.5;                                        % simulation final time
-ctrl.tfh = 0.5;                                  % control time points for hip - updated KS
-ctrl.Th = [0.5 0.5 0.5];                               % control values for hip - updated KS
-ctrl.tfs = 0.5;                                  % control time points for shoulder - updated KS
-ctrl.Ts = [0.5 0.5 0.5];                               % control values for shoulder - updated KS
+tf = 1;                                        % simulation final time
+ctrl.tfh = 1;                                  % control time points for hip - updated KS
+ctrl.Th = [1.5 1.5];                               % control values for hip - updated KS
+% ctrl.Th = [0 0];
+ctrl.tfs = 1;                                  % control time points for shoulder - updated KS
+ctrl.Ts = [0.1 0.1];                               % control values for shoulder - updated KS
+% ctrl.Ts = [0 0];
 
 % x = [tf, ctrl.tf, ctrl.T];
 % % setup and solve nonlinear programming problem
@@ -50,13 +53,13 @@ ctrl.Ts = [0.5 0.5 0.5];                               % control values for shou
 [t, z, u, indices] = hybrid_simulation(z0,ctrl,p,[0 tf]); % run simulation
 
 %% Plot COM for your submissions
-% figure(1)
-% COM = COM_jumping_leg(z,p);
-% max(COM(2,:))
-% plot(t,COM(2,:))
-% xlabel('time (s)')
-% ylabel('CoM Height (m)')
-% title('Center of Mass Trajectory')
+figure(1)
+COM = COM_swing_jump_win(z,p);
+max(COM(2,:))
+plot(t,COM(2,:))
+xlabel('time (s)')
+ylabel('CoM Height (m)')
+title('Center of Mass Trajectory')
 
 % figure(2)  % control input profile
 % ctrl_t = linspace(0, ctrl.tf, 50);
@@ -78,6 +81,6 @@ ctrl.Ts = [0.5 0.5 0.5];                               % control values for shou
 %%
 % Run the animation
 figure(3)                          % get the coordinates of the points to animate
-speed = .25;                                 % set animation speed
+speed = 0.1;                                 % set animation speed
 clf                                         % clear fig
 animate_simple(t,z,p,speed)                 % run animation

@@ -14,11 +14,11 @@ function [tout, zout, uout, indices] = hybrid_simulation(z0,ctrl,p,tspan)
 %   the first phase (stance) ended
 %
     t0 = tspan(1); tend = tspan(end);   % set initial and final times
-    dt = 0.001;
+    dt = 0.0001;
     num_step = floor((tend-t0)/dt);
     tout = linspace(t0, tend, num_step);
     zout(:,1) = z0;
-    uout = zeros(1,1);
+    uout = zeros(3,1);
     iphase_list = 1;
     for i = 1:num_step-1
         t = tout(i);
@@ -30,11 +30,11 @@ function [tout, zout, uout, indices] = hybrid_simulation(z0,ctrl,p,tspan)
         zout(1:4,i+1) = zout(1:4,i) + zout(5:8, i+1)*dt;
         uout(:,i+1) = u; 
         %%%% END
-        if(zout(1,i+1) > 0 && iphase == 1) % jump
-            iphase = 2;
-        elseif(zout(1,i+1) < 0 && iphase == 2) % max height
-            iphase = 3;
-        end
+%         if(zout(1,i+1) > 0.0365 && iphase == 1) % jump
+%             iphase = 2;
+%         elseif(zout(1,i+1) < 0 && iphase == 2) % max height
+%             iphase = 3;
+%         end
         iphase_list(i+1) = iphase;
     end
     
@@ -52,18 +52,27 @@ end
 
 %% Discrete Contact
 function qdot = discrete_impact_contact(z,p)
-    qdot = z(3:4);
-    rE = z(1); 
-    vE = z(3); 
-
-    if(rE<0 && vE < 0)
-      J  = [1, 0];
-      M = A_jumping_leg(z,p);
-      Ainv = inv(M);
+    %UPDATED - SG
+    % 06 Nov 2022 - z needs to match 8x1 format, for now just registering
+    % contact of toe. Later, will register contact of ankle with ground as
+    % well.
+    qdot = z(5:8);
+    rt = r_toe_swing_jump_win(z,p);
+    rty = rt(2);
+    vt = v_toe_swing_jump_win(z,p);
+    vty = vt(2);
+    
+    if(rty < 0 && vty < 0)
       
-      lambda_z = 1/(J * Ainv * J.');
-      F_z = lambda_z*(0 - vE);
-      qdot = qdot + Ainv*J.'*F_z;
+      M = A_swing_jump_win(z,p);
+      Ainv = inv(M);
+
+      Jt  = J_toe_swing_jump_win(z,p);
+      Jty = Jt(2,:);
+      
+      lambda_z = 1/(Jty * Ainv * (Jty.'));
+      F_y = lambda_z*(0 - vty);
+      qdot = qdot + Ainv*Jty.'*F_y;
     end
 end
 
@@ -74,7 +83,7 @@ function [dz, u] = dynamics_continuous(t,z,ctrl,p,iphase)
     u = control_laws(t,z,ctrl,iphase);  % get controls at this instant
     
     A = A_swing_jump_win(z,p);                 % get full A matrix
-    b = b_swing_jump_win(z,u,0,p);               % get full b vector
+    b = b_swing_jump_win(z,u,[0;0],p);               % get full b vector
     
     x = A\b;                % solve system for accelerations (and possibly forces)
     dz(1:4,1) = z(5:8);     % assign velocities to time derivative of state vector
@@ -105,9 +114,11 @@ function u = control_laws(t,z,ctrl,iphase)
 
         thd = pi/4;             % desired leg angle
         k = 5;                  % stiffness (N/rad)
-        b = .5;                 % damping (N/(rad/s))
+        b = 0.5;                 % damping (N/(rad/s))
 
         u = -k*(th-thd) - b*dth;% apply PD control
+%         u(1) = -k*(th(1)+thd) - b*dth(1); %Ankle want negative target angle
+        u(1) = 0;
     end
 
 end
