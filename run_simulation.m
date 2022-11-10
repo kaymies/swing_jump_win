@@ -10,12 +10,12 @@ clear all; close all; clc;
 setpath                                     % add AutoDerived, Modeling, and Visualization folders to Matlab path
 
 p = parameters();                           % get parameters from file
-<<<<<<< Updated upstream
+% <<<<<<< Updated upstream
 z0 = [0.4; -pi/6; pi/6; pi/6; 0 ; 0; 0 ;0];                    % set initial state
 % Note: 5th state is the integral of torque squared over time
 % An equation has been added to dynamics_continuous and dynamics_discrete
 % to integrate this new state.
-=======
+% =======
 
 % UPDATED EK
 %11 Nov 2022 - starting y height should have toe on ground (not ankle),
@@ -34,20 +34,20 @@ z0 = [Ankle_start_h; ankle_angle; pi/6; 0;...
 
 % z0 = [0.1; -pi/4; pi/4; pi/2;...
 %       0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
->>>>>>> Stashed changes
+% >>>>>>> Stashed changes
 
 %         tauh = BezierCurve(ctrl.Th, t/ctrl.tfh); %EDIT LATER TO MATCH CONTROL LAW
 %         %Arm control
 %         taus = BezierCurve(ctrl.Ts, t/ctrl.tfs);
 
 % set guess
-<<<<<<< Updated upstream
+% <<<<<<< Updated upstream
 tf = 0.5;                                        % simulation final time
 ctrl.tfh = 0.5;                                  % control time points for hip - updated KS
 ctrl.Th = [0.5 0.5 0.5];                               % control values for hip - updated KS
 ctrl.tfs = 0.5;                                  % control time points for shoulder - updated KS
 ctrl.Ts = [0.5 0.5 0.5];                               % control values for shoulder - updated KS
-=======
+% =======
 tf = 1.1;                                        % simulation final time
 ctrl.tfh = 2;                                  % control time points for hip - updated KS
 ctrl.Th = [0 0];                               % control values for hip - updated KS
@@ -55,7 +55,7 @@ ctrl.Th = [0 0];
 ctrl.tfs = 1;                                  % control time points for shoulder - updated KS
 ctrl.Ts = [0.0 0.0];                               % control values for shoulder - updated KS
 ctrl.Ts = [0 0];
->>>>>>> Stashed changes
+% >>>>>>> Stashed changes
 
 % x = [tf, ctrl.tf, ctrl.T];
 % % setup and solve nonlinear programming problem
@@ -89,8 +89,8 @@ xlabel('time (s)')
 ylabel('CoM Height (m)')
 title('Center of Mass Trajectory')
 
-<<<<<<< Updated upstream
-=======
+% <<<<<<< Updated upstream
+% =======
 % figure(2)
 % plot(t,z(2,:));
 
@@ -119,7 +119,7 @@ title('Velocity Trajectory')
 legend("Ankle velocity", "Hip velocity","Shoulder velocity")
 
 
->>>>>>> Stashed changes
+% >>>>>>> Stashed changes
 % figure(2)  % control input profile
 % ctrl_t = linspace(0, ctrl.tf, 50);
 % ctrl_pt_t = linspace(0, ctrl.tf, length(ctrl.T));
