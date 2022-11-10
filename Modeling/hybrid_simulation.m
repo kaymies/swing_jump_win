@@ -192,13 +192,6 @@ function u = control_laws(t,z,ctrl,iphase,t_start)
 %     tauh = 0;
 %     taus = 0;
 
-<<<<<<< Updated upstream
-        thd = pi/4;             % desired leg angle
-        k = 5;                  % stiffness (N/rad)
-        b = .5;                 % damping (N/(rad/s))
-
-        u = -k*(th-thd) - b*dth;% apply PD control
-=======
 %____________________________________________________________________________
     % UPDATED EK
     %11 Nov 2022 - max torque in leg and arm
