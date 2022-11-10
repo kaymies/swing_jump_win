@@ -23,15 +23,11 @@ function animate_simple(t,z,p, speed)
     draw_lines(z(:,end),p,h_leg,h_spring);
 end
 
-<<<<<<< Updated upstream
-function draw_lines(z,p, h_leg)
-    keypoints = keypoints_swing_jump_win(z,p);
-=======
 function draw_lines(z,p, h_leg,h_spring)
     keypoints = keypoints_swing_jump_win(z,p);
     h_spring.XData = keypoints(1,2:3);
     h_spring.YData = keypoints(2,2:3);
->>>>>>> Stashed changes
+
     h_leg.XData = keypoints(1,:);
     h_leg.YData = keypoints(2,:);
     drawnow
