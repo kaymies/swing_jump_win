@@ -10,21 +10,52 @@ clear all; close all; clc;
 setpath                                     % add AutoDerived, Modeling, and Visualization folders to Matlab path
 
 p = parameters();                           % get parameters from file
+<<<<<<< Updated upstream
 z0 = [0.4; -pi/6; pi/6; pi/6; 0 ; 0; 0 ;0];                    % set initial state
 % Note: 5th state is the integral of torque squared over time
 % An equation has been added to dynamics_continuous and dynamics_discrete
 % to integrate this new state.
+=======
+
+% UPDATED EK
+%11 Nov 2022 - starting y height should have toe on ground (not ankle),
+%min_speed corresponds to max torque according to experimental results in
+%SLACK. Added variable t_start to control when hip and shoulder torque
+%start acting
+min_speed = 2.75;
+% z0 = [0.0; -pi/6; pi/6; pi/2; 0.0 ; min_speed; min_speed ;0.0];
+
+t_start = [1.0, 0.0]; % Hip and shoulder torque start time
+ankle_angle = -pi/6;
+foot_len = p(1)-p(23);
+Ankle_start_h = -1*foot_len*sin(ankle_angle);
+z0 = [Ankle_start_h; ankle_angle; pi/6; 0;...
+      0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
+
+% z0 = [0.1; -pi/4; pi/4; pi/2;...
+%       0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
+>>>>>>> Stashed changes
 
 %         tauh = BezierCurve(ctrl.Th, t/ctrl.tfh); %EDIT LATER TO MATCH CONTROL LAW
 %         %Arm control
 %         taus = BezierCurve(ctrl.Ts, t/ctrl.tfs);
 
 % set guess
+<<<<<<< Updated upstream
 tf = 0.5;                                        % simulation final time
 ctrl.tfh = 0.5;                                  % control time points for hip - updated KS
 ctrl.Th = [0.5 0.5 0.5];                               % control values for hip - updated KS
 ctrl.tfs = 0.5;                                  % control time points for shoulder - updated KS
 ctrl.Ts = [0.5 0.5 0.5];                               % control values for shoulder - updated KS
+=======
+tf = 1.1;                                        % simulation final time
+ctrl.tfh = 2;                                  % control time points for hip - updated KS
+ctrl.Th = [0 0];                               % control values for hip - updated KS
+ctrl.Th = [0 0];
+ctrl.tfs = 1;                                  % control time points for shoulder - updated KS
+ctrl.Ts = [0.0 0.0];                               % control values for shoulder - updated KS
+ctrl.Ts = [0 0];
+>>>>>>> Stashed changes
 
 % x = [tf, ctrl.tf, ctrl.T];
 % % setup and solve nonlinear programming problem
@@ -47,7 +78,7 @@ ctrl.Ts = [0.5 0.5 0.5];                               % control values for shou
 % ctrl.tf = x(2);
 % ctrl.T = x(3:end);
 
-[t, z, u, indices] = hybrid_simulation(z0,ctrl,p,[0 tf]); % run simulation
+[t, z, u, indices] = hybrid_simulation(z0,ctrl,p,[0 tf],t_start); % run simulation
 
 %% Plot COM for your submissions
 figure(1)
@@ -58,6 +89,37 @@ xlabel('time (s)')
 ylabel('CoM Height (m)')
 title('Center of Mass Trajectory')
 
+<<<<<<< Updated upstream
+=======
+% figure(2)
+% plot(t,z(2,:));
+
+%UPDATED - EK 
+%03 Nov 2022 - max torque in leg and arm
+figure(4)
+plot(t,u(1,:))
+hold on
+plot(t,u(2,:))
+hold on
+plot(t,u(3,:))
+xlabel('time (s)')
+ylabel('Torque (Nm)')
+title('Torque Trajectory')
+legend("Ankle torque", "Hip torque","Shoulder Torque")
+
+figure(5)
+plot(t,z(6,:))
+hold on
+plot(t,z(7,:))
+hold on
+plot(t,z(8,:))
+xlabel('time (s)')
+ylabel('Angular Velocity (rad/s)')
+title('Velocity Trajectory')
+legend("Ankle velocity", "Hip velocity","Shoulder velocity")
+
+
+>>>>>>> Stashed changes
 % figure(2)  % control input profile
 % ctrl_t = linspace(0, ctrl.tf, 50);
 % ctrl_pt_t = linspace(0, ctrl.tf, length(ctrl.T));
