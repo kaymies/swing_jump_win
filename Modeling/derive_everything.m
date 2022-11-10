@@ -19,6 +19,7 @@ dq  = [dy; dtha; dthh; dths];    % first time derivatives
 ddq = [ddy; ddtha; ddthh; ddths];  % second time derivatives
 u   = [taua; tauh; taus];          % control forces and moments
 Fc   = [Fy; Fy2];           % constraint forces and moments
+% Fc   = Fy;           % constraint forces and moments
 p   = [l0; l1; l2; l3; l4;
        c0; c1; c2; c3; c4; 
 	   m0; m1; m2; m3; m4; m5;
@@ -48,6 +49,8 @@ ddt = @(r) jacobian(r,[q;dq])*[dq;ddq];
 rt = y*jhat + l0*er0hat;
 rc0 = y*jhat + c0*er0hat;
 ra = y*jhat;
+re1 = ra - le1*er0hat; %back of foot (heel) - SG 07 Nov
+re2 = ra + le2*er1hat; %anchor for elastic (location on lower leg) - SG 07 Nov
 rc1 = ra + c1*er1hat;
 rk = ra + l1*er1hat;
 rc2 = rk + c2*er2hat;
@@ -56,7 +59,7 @@ rc3 = rh + c3*jhat;
 rs = rh + l3*jhat;
 rc4 = rs + c4*er4hat;
 rf = rs + l4*er4hat;
-keypoints = [rt ra rk rh rs rf]; %t-toe; a-ankle; k-knee; h-hip; s-shoulder; f-finger
+keypoints = [rt re1 re2 ra rk rh rs rf]; %t-toe; a-ankle; k-knee; h-hip; s-shoulder; f-finger
 
 % Take time derivatives of vectors as required for kinetic energy terms.
 drc0 = ddt(rc0);
@@ -105,7 +108,7 @@ V5 = m5*g*dot(rf, jhat);
 QF = F2Q(Fy*jhat,rt) + F2Q(Fy2*jhat,ra);
 Qtaua = 0;
 Qtauh = M2Q(-tauh*khat, -dthh*khat);
-Qtaus = M2Q(taus*khat, dths*khat);
+Qtaus = M2Q(-taus*khat, -dths*khat);
 
 % Sum kinetic energy terms, potential energy terms, and generalized force
 % contributions.
@@ -156,3 +159,24 @@ matlabFunction(dC,'file',[directory 'dC_' name],'vars',{z u p});
 drcm = ddt(rcm);             % Calculate center of mass velocity vector
 COM = [rcm(1:2); drcm(1:2)]; % Concatenate x and y coordinates and speeds of center of mass in array
 matlabFunction(COM,'file',[directory 'COM_' name],'vars',{z p});
+
+
+% Additional functions - SG
+% Toe parameters
+Jt = jacobian(rt,q);
+Jt = Jt(1:2,1:4);
+vt = ddt(rt);
+matlabFunction(rt(1:2),'file',[directory 'r_toe_' name],'vars',{z p}); %toe position
+matlabFunction(vt(1:2),'file',[directory 'v_toe_' name],'vars',{z p}); %toe velocity
+matlabFunction(Jt,'file',[directory 'J_toe_' name],'vars',{z p}); %Toe Jacobian
+
+%Ankle parameters
+Ja = jacobian(ra,q);
+Ja = Ja(1:2,1:4);
+va = ddt(ra);
+matlabFunction(ra(1:2),'file',[directory 'r_ank_' name],'vars',{z p}); %ankle position
+matlabFunction(va(1:2),'file',[directory 'v_ank_' name],'vars',{z p}); %ankle velocity
+matlabFunction(Ja,'file',[directory 'J_ank_' name],'vars',{z p}); %ankle Jacobian
+
+
+
