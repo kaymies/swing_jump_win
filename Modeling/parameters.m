@@ -15,17 +15,6 @@ function p = parameters()
  m3 = 34.9*1e-3;
  m4 = 8.22*1e-3;
  m5 = 100*1e-3;
-<<<<<<< Updated upstream
- I0 = 490.45e-6;
- I1 = 10865.5e-6;
- I2 = 4668.15e-6;
- I3 = 39244e-6;
- I4 = 3428.51e-6;
- le1 = l0/2;
- le2 = 41.63*1e-3;
- k = 5; % temp
- ls0 = 0.05;% temp
-=======
  I0 = 490.45e-9;
  I1 = 10440e-9;
  I2 = 4668.15e-9;
@@ -35,7 +24,7 @@ function p = parameters()
  le2 = 41.63*1e-3;
  k = 30; %% TEMPORARY - BALLPARK STIFFNESS FOR RUBBER BAND
  ls0 = 0.03; %% TEPORARY UPDATED - EK 11 Nov 2022
->>>>>>> Stashed changes
+
  g = 9.81;
  p   = [l0; l1; l2; l3; l4;
        c0; c1; c2; c3; c4; 
