@@ -218,7 +218,6 @@ function u = control_laws(t,z,ctrl,iphase,t_start)
     end
     if t < t_start(2) % Check if haven't reached shoulder torque trajectory start time
         taus = 0;
->>>>>>> Stashed changes
     end
     
     taua = 0; % Ankle always zero torque
