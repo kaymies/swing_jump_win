@@ -59,11 +59,11 @@ rk = rh + l2*er2hat;
 rc1 = rk + c1*er1hat;
 ra = rk + l1*er1hat;
 rc0 = ra + c0*er0hat;
-rt = ra + (l0-le1)*er0hat;
+rt = ra + (l0-le*er0hat;
 
 
 re1 = ra - le1*er0hat; %back of foot (heel) - SG 07 Nov
-re2 = ra - le2*er1hat; %anchor for elastic (location on lower leg) - SG 07 Nov
+re2 = ra + le2*er1hat; %anchor for elastic (location on lower leg) - SG 07 Nov
 
 
 

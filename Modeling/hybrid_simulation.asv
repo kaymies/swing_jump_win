@@ -130,14 +130,14 @@ function qdot = discrete_impact_contact(z,p)
 %         qdot(2) = 0;
     end
 
-%         % Hip joint limit angle
-%     thh_lim0 = deg2rad(180-143); %Minimum angle
-%     thh_lim1 = deg2rad(180-106); %Maximum angle
-%     if z(3) < thh_lim0 && qdot(3) < 0
-%         qdot(3) = 0;
-% %     elseif z(3) > thh_lim1 && qdot(3) > 0
-% %         qdot(3) = 0;
-%     end
+    % Hip joint limit angle
+    thh_lim0 = deg2rad(180-143); %Minimum angle
+    thh_lim1 = deg2rad(180-106); %Maximum angle
+    if z(3) < thh_lim0 && qdot(3) < 0
+        qdot(3) = 0;
+    elseif z(3) > thh_lim1 && qdot(3) > 0
+        qdot(3) = 0;
+    end
 end
 
 %% Continuous dynamics

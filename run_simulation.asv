@@ -10,7 +10,7 @@ clear all; close all; clc;
 setpath                                     % add AutoDerived, Modeling, and Visualization folders to Matlab path
 
 p = parameters();                           % get parameters from file
-z0 = [0.2; -pi/6; pi/6; pi/4;...
+z0 = [0.1; -pi/6; pi/6; 0;...
       0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
 
 % z0 = [0.1; -pi/4; pi/4; pi/2;...
@@ -62,7 +62,7 @@ ylabel('CoM Height (m)')
 title('Center of Mass Trajectory')
 
 figure(2)
-plot(t,z(4,:));
+plot(t,z(2,:));
 
 % figure(2)  % control input profile
 % ctrl_t = linspace(0, ctrl.tf, 50);
@@ -84,6 +84,6 @@ plot(t,z(4,:));
 %%
 % Run the animation
 figure(3)                          % get the coordinates of the points to animate
-speed = 0.1;                                 % set animation speed
+speed = 0.;                                 % set animation speed
 clf                                         % clear fig
 animate_simple(t,z,p,speed)                 % run animation
