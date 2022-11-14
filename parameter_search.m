@@ -1,5 +1,9 @@
+input.AnimOn = 0;
+input.PlotOn = 0;
+
 tis = 0.3:0.01:0.7;
-peak = zeros(length(tis));
+peaks = zeros(1,length(tis));
 for i = 1:length(tis)
-    peak(i) = run_simulation(tis(i));
+    peaks(i) = run_simulation(tis(i),input);
+    i
 end
