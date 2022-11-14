@@ -37,28 +37,38 @@ khat = cross(ihat,jhat);
 
 % Define other unit vectors for use in defining other vectors.
 er0hat = cos(-tha)*ihat - sin(-tha)*jhat;
-er1hat =  cos(thh)*ihat + sin(thh)*jhat;
-er2hat = -cos(thh)*ihat + sin(thh)*jhat;
+er1hat =  -cos(thh)*ihat - sin(thh)*jhat;
+er2hat = cos(thh)*ihat - sin(thh)*jhat;
 er4hat = sin(ths)*ihat - cos(ths)*jhat;
+% er4hat = cos(ths)*ihat + sin(ths)*jhat;
 
 % A handy anonymous function for taking first and second time derivatives
 % of vectors using the chain rule.  See Lecture 6 for more information. 
 ddt = @(r) jacobian(r,[q;dq])*[dq;ddq]; 
 
 % Define vectors to key points.
-rt = y*jhat + l0*er0hat;
-rc0 = y*jhat + c0*er0hat;
-ra = y*jhat;
+rh = y*jhat; %Hip
+%Upper section
+rc3 = rh + c3*jhat; %Torso COG
+rs = rh + l3*jhat; %Shoulder
+rc4 = rs + c4*er4hat; %Arm COG
+rf = rs + l4*er4hat; %Tip of arm (finger)
+%Lower section
+rc2 = rh + c2*er2hat; %Thigh COG
+rk = rh + l2*er2hat; %Knee
+rc1 = rk + c1*er1hat; %Lower leg COG
+ra = rk + l1*er1hat; %Ankle
+rc0 = ra + c0*er0hat; %Foot COG
+rt = ra + (l0-le1)*er0hat; %Toe
+
+
 re1 = ra - le1*er0hat; %back of foot (heel) - SG 07 Nov
-re2 = ra + le2*er1hat; %anchor for elastic (location on lower leg) - SG 07 Nov
-rc1 = ra + c1*er1hat;
-rk = ra + l1*er1hat;
-rc2 = rk + c2*er2hat;
-rh = rk + l2*er2hat;
-rc3 = rh + c3*jhat;
-rs = rh + l3*jhat;
-rc4 = rs + c4*er4hat;
-rf = rs + l4*er4hat;
+re2 = ra - le2*er1hat; %anchor for elastic (location on lower leg) - SG 07 Nov
+
+
+
+
+
 keypoints = [rt re1 re2 ra rk rh rs rf]; %t-toe; a-ankle; k-knee; h-hip; s-shoulder; f-finger
 
 % Take time derivatives of vectors as required for kinetic energy terms.
@@ -106,7 +116,8 @@ V5 = m5*g*dot(rf, jhat);
 % contributions to generalized forces.
 % Not sure...
 QF = F2Q(Fy*jhat,rt) + F2Q(Fy2*jhat,ra);
-Qtaua = 0;
+QF = 0;
+Qtaua = M2Q(-taua*khat, -dtha*khat);
 Qtauh = M2Q(-tauh*khat, -dthh*khat);
 Qtaus = M2Q(-taus*khat, -dths*khat);
 
@@ -178,5 +189,20 @@ matlabFunction(ra(1:2),'file',[directory 'r_ank_' name],'vars',{z p}); %ankle po
 matlabFunction(va(1:2),'file',[directory 'v_ank_' name],'vars',{z p}); %ankle velocity
 matlabFunction(Ja,'file',[directory 'J_ank_' name],'vars',{z p}); %ankle Jacobian
 
+%Heel parameters
+Je1 = jacobian(re1,q);
+Je1 = Ja(1:2,1:4);
+ve1 = ddt(re1);
+matlabFunction(re1(1:2),'file',[directory 'r_heel_' name],'vars',{z p}); %ankle position
+matlabFunction(ve1(1:2),'file',[directory 'v_heel_' name],'vars',{z p}); %ankle velocity
+matlabFunction(Je1,'file',[directory 'J_heel_' name],'vars',{z p}); %ankle Jacobian
+
+%Hip parameters
+Jh = jacobian(rh,q);
+Jh = Jh(1:2,1:4);
+vh = ddt(rh);
+matlabFunction(rh(1:2),'file',[directory 'r_hip_' name],'vars',{z p}); % position
+matlabFunction(vh(1:2),'file',[directory 'v_hip_' name],'vars',{z p}); % velocity
+matlabFunction(Jh,'file',[directory 'J_hip_' name],'vars',{z p}); % Jacobian
 
 

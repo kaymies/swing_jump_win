@@ -28,6 +28,7 @@ function [tout, zout, uout, indices] = hybrid_simulation(z0,ctrl,p,tspan)
         zout(:,i+1) = zout(:,i) + dz*dt;
         zout(5:8,i+1) = discrete_impact_contact(zout(:,i+1), p);
         zout(1:4,i+1) = zout(1:4,i) + zout(5:8, i+1)*dt;
+        
         uout(:,i+1) = u; 
         %%%% END
 %         if(zout(1,i+1) > 0.0365 && iphase == 1) % jump
@@ -56,7 +57,9 @@ function qdot = discrete_impact_contact(z,p)
     % 06 Nov 2022 - z needs to match 8x1 format, for now just registering
     % contact of toe. Later, will register contact of ankle with ground as
     % well.
-    qdot = z(5:8);
+    qdot = z(5:8);   
+
+    % Toe contact - SG
     rt = r_toe_swing_jump_win(z,p);
     rty = rt(2);
     vt = v_toe_swing_jump_win(z,p);
@@ -72,7 +75,8 @@ function qdot = discrete_impact_contact(z,p)
       
       lambda_z = 1/(Jy * Ainv * (Jy.'));
       F_y = lambda_z*(0 - vty);
-      qdot = qdot + Ainv*Jy.'*F_y;
+      qchange = Ainv*Jy.'*F_y;
+      qdot = qdot + qchange;
     end
 
     % SG - Add ankle contact - 07 Nov 2022
@@ -91,12 +95,13 @@ function qdot = discrete_impact_contact(z,p)
       
       lambda_z = 1/(Jy * Ainv * (Jy.'));
       F_y = lambda_z*(0 - vay);
-      qdot = qdot + Ainv*Jy.'*F_y;
+      qchange = Ainv*Jy.'*F_y;
+      qdot = qdot + qchange;
     end
 
     % SG - Add joint position constraints - 07 Nov 2022
     
-    % Ankle joint limit angle
+%     Ankle joint limit angle
     tha_lim0 = deg2rad(-60); %Minimum angle
     tha_lim1 = deg2rad(0); %Maximum
     if z(2) < tha_lim0 && qdot(2) < 0
@@ -105,14 +110,7 @@ function qdot = discrete_impact_contact(z,p)
 %         qdot(2) = 0;
     end
 
-    % Hip joint limit angle
-    thh_lim0 = deg2rad(180-143); %Minimum angle
-    thh_lim1 = deg2rad(180-106); %Maximum angle
-    if z(3) < thh_lim0 && qdot(3) < 0
-        qdot(3) = 0;
-    elseif z(3) > thh_lim1 && qdot(3) > 0
-        qdot(3) = 0;
-    end
+
 end
 
 %% Continuous dynamics
@@ -120,7 +118,30 @@ function [dz, u] = dynamics_continuous(t,z,ctrl,p,iphase)
     %UPDATED - SG
     % 03 Nov 2022 - updated dz to be 8x1 vector instead of 4x1 - SG
     u = control_laws(t,z,ctrl,iphase);  % get controls at this instant
-    
+    u2 = control_contacts(t,z);
+    if (u2 == [0;0;0])
+        a = 1;
+    end
+    u = u + u2;
+%     u = [0;0;0];
+
+    % EK - Cap off torque
+%     max_torque = 0.85;
+%     if abs(u(2)) > max_torque % check on max torque to be within motor limits
+%         if u(2) > 0
+%             u(2) = max_torque;
+%         else
+%             u(2) = -max_torque;
+%         end
+%     end
+%     if abs(u(3)) > max_torque
+%         if u(3) > 0
+%             u(3) = max_torque;
+%         else
+%             u(3) = -max_torque;
+%         end
+%     end
+    %END EK
     A = A_swing_jump_win(z,p);                 % get full A matrix
     b = b_swing_jump_win(z,u,[0;0],p);               % get full b vector
     
@@ -135,29 +156,82 @@ function u = control_laws(t,z,ctrl,iphase)
     %03 Nov 2022 - adjusted areal control so that PD is applied to leg, but
     %arm control is preserved. Adjusted in-ground control to output leg and
     %arm control curves.
-    if iphase == 1
+
+        inv_Kt = 0.0132;
+        
         %Ankle control, irrelevant
         taua = 0;
-        %Leg control, Bezier curve on torque
-        tauh = BezierCurve(ctrl.Th, t/ctrl.tfh); %EDIT LATER TO MATCH CONTROL LAW
-        %Arm control
-        taus = BezierCurve(ctrl.Ts, t/ctrl.tfs); %EDIT LATER TO MATCH CONTROL LAW
+        tauh = 0;
+        taus = 0;
+        
+        %Leg control
+%         if t >= ctrl.tih 
+%             tauh = -inv_Kt*z(7) + 0.85;
+%         end
+%         %Arm control
+%         if t >= ctrl.tis 
+%             taus = -inv_Kt*z(8) + 0.85;
+%         end
 
         %Create control vector
         u = [taua; tauh; taus];
-    else
+
+
         %Updated - th and dth as vector of ankle, hip, shoulder angles - KS
         % PD Control in flight
-        th = z(2:4,:);            % leg angle
-        dth = z(6:8,:);           % leg angular velocity
-
-        thd = pi/4;             % desired leg angle
-        k = 5;                  % stiffness (N/rad)
-        b = 0.5;                 % damping (N/(rad/s))
-
-        u = -k*(th-thd) - b*dth;% apply PD control
+%         th = z(2:4,:);            % leg angle
+%         dth = z(6:8,:);           % leg angular velocity
+% 
+%         thd = pi/4;             % desired leg angle
+%         k = 5;                  % stiffness (N/rad)
+%         b = 0.5;                 % damping (N/(rad/s))
+% 
+%         u = -k*(th-thd) - b*dth;% apply PD control
 %         u(1) = -k*(th(1)+thd) - b*dth(1); %Ankle want negative target angle
-        u(1) = 0;
+%         u(1) = 0;
+
+end
+
+
+% SG - Separate function for joint limits implemented as spring system - 13 Nov 2022
+
+function u = control_contacts(t,z)
+    taua = 0;
+    taus = 0;
+    tauh = 0;
+
+    %SG - hip joint spring limiter instead of hard contact - 13 Nov 2022
+    thh_lim0 = deg2rad(180-143); %Minimum angle
+%     thh_lim0 = 0.45; %25
+    thh_lim1 = deg2rad(180-106); %Maximum angle
+%     thh_lim1 = 1.22; %70
+    kH = 500;
+    cH = 0;
+    if z(3) > thh_lim1 %&& z(7) > 0
+        tauh = kH * (thh_lim1 - z(3)) - cH * z(7);
+    elseif z(3) <= thh_lim0 %&& z(7) < 0
+        tauh = kH * (thh_lim0 - z(3)) - cH * z(7);
+%         hip_min = 1;
     end
 
+%     if hip_min
+%         
+%         if z(3) > thh_lim0
+%             hip_min = 0;
+%         end
+%     elseif hip_max
+% 
+%     end
+
+%     tauh = 0;
+%         % Ankle joint limit angle
+%     tha_lim0 = deg2rad(-60); %Minimum angle
+%     tha_lim1 = deg2rad(0); %Maximum
+%     if z(2) > tha_lim1 && z(6) > 0
+%         taua = kH * (tha_lim1 - z(3)) - cH * z(76);
+%     elseif z(2) <= tha_lim0 && z(6) < 0
+%         taua = kH * (tha_lim0 - z(2)) - cH * z(6);
+%     end
+
+    u = [taua; tauh; taus];
 end
