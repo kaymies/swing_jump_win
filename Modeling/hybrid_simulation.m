@@ -119,8 +119,29 @@ function [dz, u] = dynamics_continuous(t,z,ctrl,p,iphase)
     % 03 Nov 2022 - updated dz to be 8x1 vector instead of 4x1 - SG
     u = control_laws(t,z,ctrl,iphase);  % get controls at this instant
     u2 = control_contacts(t,z);
+    if (u2 == [0;0;0])
+        a = 1;
+    end
     u = u + u2;
 %     u = [0;0;0];
+
+    % EK - Cap off torque
+%     max_torque = 0.85;
+%     if abs(u(2)) > max_torque % check on max torque to be within motor limits
+%         if u(2) > 0
+%             u(2) = max_torque;
+%         else
+%             u(2) = -max_torque;
+%         end
+%     end
+%     if abs(u(3)) > max_torque
+%         if u(3) > 0
+%             u(3) = max_torque;
+%         else
+%             u(3) = -max_torque;
+%         end
+%     end
+    %END EK
     A = A_swing_jump_win(z,p);                 % get full A matrix
     b = b_swing_jump_win(z,u,[0;0],p);               % get full b vector
     
@@ -135,14 +156,22 @@ function u = control_laws(t,z,ctrl,iphase)
     %03 Nov 2022 - adjusted areal control so that PD is applied to leg, but
     %arm control is preserved. Adjusted in-ground control to output leg and
     %arm control curves.
+
+        inv_Kt = 0.0132;
+        
         %Ankle control, irrelevant
-
         taua = 0;
-        %Leg control, Bezier curve on torque
-        tauh = BezierCurve(ctrl.Th, t/ctrl.tfh); %EDIT LATER TO MATCH CONTROL LAW
-
-        %Arm control
-        taus = BezierCurve(ctrl.Ts, t/ctrl.tfs); %EDIT LATER TO MATCH CONTROL LAW
+        tauh = 0;
+        taus = 0;
+        
+        %Leg control
+%         if t >= ctrl.tih 
+%             tauh = -inv_Kt*z(7) + 0.85;
+%         end
+%         %Arm control
+%         if t >= ctrl.tis 
+%             taus = -inv_Kt*z(8) + 0.85;
+%         end
 
         %Create control vector
         u = [taua; tauh; taus];
@@ -173,16 +202,28 @@ function u = control_contacts(t,z)
 
     %SG - hip joint spring limiter instead of hard contact - 13 Nov 2022
     thh_lim0 = deg2rad(180-143); %Minimum angle
-%     thh_lim0 = 0.45;
+%     thh_lim0 = 0.45; %25
     thh_lim1 = deg2rad(180-106); %Maximum angle
-    kH = 5000;
-    cH = 0.1;
-    if z(3) > thh_lim1 && z(7) > 0
+%     thh_lim1 = 1.22; %70
+    kH = 500;
+    cH = 0;
+    if z(3) > thh_lim1 %&& z(7) > 0
         tauh = kH * (thh_lim1 - z(3)) - cH * z(7);
-    elseif z(3) <= thh_lim0 && z(7) < 0
+    elseif z(3) <= thh_lim0 %&& z(7) < 0
         tauh = kH * (thh_lim0 - z(3)) - cH * z(7);
+%         hip_min = 1;
     end
 
+%     if hip_min
+%         
+%         if z(3) > thh_lim0
+%             hip_min = 0;
+%         end
+%     elseif hip_max
+% 
+%     end
+
+%     tauh = 0;
 %         % Ankle joint limit angle
 %     tha_lim0 = deg2rad(-60); %Minimum angle
 %     tha_lim1 = deg2rad(0); %Maximum

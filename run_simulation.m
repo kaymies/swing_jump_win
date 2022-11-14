@@ -27,13 +27,15 @@ z0 = [0.1318; -1.0472; 0.6454; -pi/2;...
 %         taus = BezierCurve(ctrl.Ts, t/ctrl.tfs);
 
 % set guess
-tf = 2;                                        % simulation final time
+tf = 1;                                        % simulation final time
+ctrl.tih = 1;
 ctrl.tfh = 1;                                  % control time points for hip - updated KS
 ctrl.Th = [20 20];                               % control values for hip - updated KS
 % ctrl.Th = [0 0];
+ctrl.tis = 1;
 ctrl.tfs = 1;                                  % control time points for shoulder - updated KS
 ctrl.Ts = [0.1 0.1];                               % control values for shoulder - updated KS
-ctrl.Ts = [0 0];
+% ctrl.Ts = [0 0];
 
 % x = [tf, ctrl.tf, ctrl.T];
 % % setup and solve nonlinear programming problem
@@ -67,8 +69,40 @@ xlabel('time (s)')
 ylabel('CoM Height (m)')
 title('Center of Mass Trajectory')
 
-figure(2)
-plot(t,z(2,:));
+figure(2); clf
+plot(t,z(3,:))
+title("Hip angle")
+
+%UPDATED - EK 
+%03 Nov 2022 - max torque in leg and arm
+figure(4)
+plot(t,u(1,:))
+hold on
+plot(t,u(2,:))
+hold on
+plot(t,u(3,:))
+xlabel('time (s)')
+ylabel('Torque (Nm)')
+title('Torque Trajectory')
+legend("Ankle torque", "Hip torque","Shoulder Torque")
+
+figure(5)
+plot(t,z(6,:))
+hold on
+plot(t,z(7,:))
+hold on
+plot(t,z(8,:))
+xlabel('time (s)')
+ylabel('Angular Velocity (rad/s)')
+title('Velocity Trajectory')
+legend("Ankle velocity", "Hip velocity","Shoulder velocity")
+
+
+figure(6)
+plot(t, energy_swing_jump_win(z,p))
+xlabel('time (s)')
+ylabel('Energy')
+
 
 % figure(2)  % control input profile
 % ctrl_t = linspace(0, ctrl.tf, 50);
@@ -90,6 +124,6 @@ plot(t,z(2,:));
 %%
 % Run the animation
 figure(3)                          % get the coordinates of the points to animate
-speed = 0.5;                                 % set animation speed
+speed = 0.1;                                 % set animation speed
 clf                                         % clear fig
 animate_simple(t,z,p,speed)                 % run animation
