@@ -165,13 +165,13 @@ function u = control_laws(t,z,ctrl,iphase)
         taus = 0;
         
         %Leg control
-%         if t >= ctrl.tih 
-%             tauh = -inv_Kt*z(7) + 0.85;
-%         end
-%         %Arm control
-%         if t >= ctrl.tis 
-%             taus = -inv_Kt*z(8) + 0.85;
-%         end
+        if t >= ctrl.tih 
+            tauh = -inv_Kt*z(7) + 0.85;
+        end
+        %Arm control
+        if t >= ctrl.tis 
+            taus = -inv_Kt*z(8) + 0.85;
+        end
 
         %Create control vector
         u = [taua; tauh; taus];
