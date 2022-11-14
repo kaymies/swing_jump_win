@@ -57,9 +57,33 @@ function qdot = discrete_impact_contact(z,p)
     % 06 Nov 2022 - z needs to match 8x1 format, for now just registering
     % contact of toe. Later, will register contact of ankle with ground as
     % well.
-    qdot = z(5:8);   
+    qdot = z(5:8);
 
-    % Toe contact - SG
+    %%% HIP TEST START
+%     rh = r_hip_swing_jump_win(z,p);
+%     rhy = rh(2);
+%     vh = v_hip_swing_jump_win(z,p);
+%     vhy = vh(2);
+%     
+%     if(rhy < 0 && vhy < 0)
+%       
+%       M = A_swing_jump_win(z,p);
+%       Ainv = inv(M);
+% 
+%       J  = J_hip_swing_jump_win(z,p);
+%       Jy = J(2,:);
+%       
+%       lambda_z = 1/(Jy * Ainv * (Jy.'));
+%       F_y = lambda_z*(0 - vhy);
+%       qchange = Ainv*Jy.'*F_y;
+%       qdot = qdot + qchange;
+%     end
+
+    %%% HIP TEST END
+
+   
+
+    % Toe contact
     rt = r_toe_swing_jump_win(z,p);
     rty = rt(2);
     vt = v_toe_swing_jump_win(z,p);
@@ -78,6 +102,26 @@ function qdot = discrete_impact_contact(z,p)
       qchange = Ainv*Jy.'*F_y;
       qdot = qdot + qchange;
     end
+
+     %Heel contact
+%     re1 = r_heel_swing_jump_win(z,p);
+%     re1y = re1(2);
+%     ve1 = v_heel_swing_jump_win(z,p);
+%     ve1y = ve1(2);
+%     
+%     if(re1y < 0 && ve1y < 0)
+%       
+%       M = A_swing_jump_win(z,p);
+%       Ainv = inv(M);
+% 
+%       J  = J_heel_swing_jump_win(z,p);
+%       Jy = J(2,:);
+%       
+%       lambda_z = 1/(Jy * Ainv * (Jy.'));
+%       F_y = lambda_z*(0 - ve1y);
+%       qchange = Ainv*Jy.'*F_y;
+%       qdot = qdot + qchange;
+%     end
 
     % SG - Add ankle contact - 07 Nov 2022
     ra = r_ank_swing_jump_win(z,p);
@@ -98,6 +142,8 @@ function qdot = discrete_impact_contact(z,p)
       qchange = Ainv*Jy.'*F_y;
       qdot = qdot + qchange;
     end
+
+
 
     % SG - Add joint position constraints - 07 Nov 2022
     
@@ -176,7 +222,7 @@ function u = control_contacts(t,z)
 %     thh_lim0 = 0.45;
     thh_lim1 = deg2rad(180-106); %Maximum angle
     kH = 5000;
-    cH = 0.1;
+    cH = 0;
     if z(3) > thh_lim1 && z(7) > 0
         tauh = kH * (thh_lim1 - z(3)) - cH * z(7);
     elseif z(3) <= thh_lim0 && z(7) < 0
@@ -186,10 +232,10 @@ function u = control_contacts(t,z)
 %         % Ankle joint limit angle
 %     tha_lim0 = deg2rad(-60); %Minimum angle
 %     tha_lim1 = deg2rad(0); %Maximum
-%     if z(2) > tha_lim1 && z(6) > 0
-%         taua = kH * (tha_lim1 - z(3)) - cH * z(76);
-%     elseif z(2) <= tha_lim0 && z(6) < 0
-%         taua = kH * (tha_lim0 - z(2)) - cH * z(6);
+%     if z(2) < tha_lim0 && z(6) < 0
+%         taua = k * (tha_lim0 - z(2)) - c*z(6);
+%     elseif z(2) > tha_lim1 && z(6) > 0
+%         taua = k * (tha_lim1 - z(2)) - c*z(6);
 %     end
 
     u = [taua; tauh; taus];

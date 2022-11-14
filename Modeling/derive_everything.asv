@@ -47,19 +47,19 @@ er4hat = sin(ths)*ihat - cos(ths)*jhat;
 ddt = @(r) jacobian(r,[q;dq])*[dq;ddq]; 
 
 % Define vectors to key points.
-rh = y*jhat; %Hip
+rh = y*jhat; 
 %Upper section
-rc3 = rh + c3*jhat; %Torso COG
-rs = rh + l3*jhat; %Shoulder
-rc4 = rs + c4*er4hat; %Arm COG
-rf = rs + l4*er4hat; %Tip of arm (finger)
+rc3 = rh + c3*jhat;
+rs = rh + l3*jhat;
+rc4 = rs + c4*er4hat;
+rf = rs + l4*er4hat;
 %Lower section
-rc2 = rh + c2*er2hat; %Thigh COG
-rk = rh + l2*er2hat; %Knee
-rc1 = rk + c1*er1hat; %Lower leg COG
-ra = rk + l1*er1hat; %Ankle
-rc0 = ra + c0*er0hat; %Foot COG
-rt = ra + (l0-le1)*er0hat; %Toe
+rc2 = rh + c2*er2hat;
+rk = rh + l2*er2hat;
+rc1 = rk + c1*er1hat;
+ra = rk + l1*er1hat;
+rc0 = ra + c0*er0hat;
+rt = ra + (l0-le1)*er0hat;
 
 
 re1 = ra - le1*er0hat; %back of foot (heel) - SG 07 Nov
@@ -188,14 +188,6 @@ va = ddt(ra);
 matlabFunction(ra(1:2),'file',[directory 'r_ank_' name],'vars',{z p}); %ankle position
 matlabFunction(va(1:2),'file',[directory 'v_ank_' name],'vars',{z p}); %ankle velocity
 matlabFunction(Ja,'file',[directory 'J_ank_' name],'vars',{z p}); %ankle Jacobian
-
-%Heel parameters
-Je1 = jacobian(re1,q);
-Je1 = Ja(1:2,1:4);
-ve1 = ddt(re1);
-matlabFunction(re1(1:2),'file',[directory 'r_heel_' name],'vars',{z p}); %ankle position
-matlabFunction(ve1(1:2),'file',[directory 'v_heel_' name],'vars',{z p}); %ankle velocity
-matlabFunction(Je1,'file',[directory 'J_heel_' name],'vars',{z p}); %ankle Jacobian
 
 %Hip parameters
 Jh = jacobian(rh,q);
