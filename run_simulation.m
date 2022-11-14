@@ -28,12 +28,10 @@ z0 = [0.1318; -1.0472; 0.6454; -pi/2;...
 
 % set guess
 tf = 1;                                        % simulation final time
-ctrl.tih = 1;
-ctrl.tfh = 1;                                  % control time points for hip - updated KS
+ctrl.tih = 0.5;                                  % control time points for hip - updated KS
 ctrl.Th = [20 20];                               % control values for hip - updated KS
 % ctrl.Th = [0 0];
-ctrl.tis = 1;
-ctrl.tfs = 1;                                  % control time points for shoulder - updated KS
+ctrl.tis = 0.5;
 ctrl.Ts = [0.1 0.1];                               % control values for shoulder - updated KS
 % ctrl.Ts = [0 0];
 
@@ -124,6 +122,6 @@ ylabel('Energy')
 %%
 % Run the animation
 figure(3)                          % get the coordinates of the points to animate
-speed = 0.1;                                 % set animation speed
+speed = 0.2;                                 % set animation speed
 clf                                         % clear fig
 animate_simple(t,z,p,speed)                 % run animation
