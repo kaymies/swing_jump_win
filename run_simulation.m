@@ -21,7 +21,7 @@ z0 = [0.2; -pi/6; pi/6; pi/4;...
 %         taus = BezierCurve(ctrl.Ts, t/ctrl.tfs);
 
 % set guess
-tf = 2;                                        % simulation final time
+tf = 1;                                        % simulation final time
 ctrl.tfh = 1;                                  % control time points for hip - updated KS
 ctrl.Th = [1 1];                               % control values for hip - updated KS
 ctrl.Th = [0 0];
