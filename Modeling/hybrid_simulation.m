@@ -165,6 +165,7 @@ function u = control_laws(t,z,ctrl,iphase)
         taus = 0;
         
         %Leg control
+
         K = 50;
         b = 0.5;
 %         des_thih = 0;
@@ -180,6 +181,8 @@ function u = control_laws(t,z,ctrl,iphase)
         else
             taus = K*(des_this-z(4))+b*(0-z(8)); % Keep shoulder down
         end
+
+
 
         %Create control vector
         u = [taua; tauh; taus];
