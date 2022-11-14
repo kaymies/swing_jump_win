@@ -176,7 +176,7 @@ function u = control_contacts(t,z)
 %     thh_lim0 = 0.45;
     thh_lim1 = deg2rad(180-106); %Maximum angle
     kH = 5000;
-    cH = 0.1;
+    cH = 0;
     if z(3) > thh_lim1 && z(7) > 0
         tauh = kH * (thh_lim1 - z(3)) - cH * z(7);
     elseif z(3) <= thh_lim0 && z(7) < 0
@@ -186,10 +186,15 @@ function u = control_contacts(t,z)
 %         % Ankle joint limit angle
 %     tha_lim0 = deg2rad(-60); %Minimum angle
 %     tha_lim1 = deg2rad(0); %Maximum
-%     if z(2) > tha_lim1 && z(6) > 0
-%         taua = kH * (tha_lim1 - z(3)) - cH * z(76);
-%     elseif z(2) <= tha_lim0 && z(6) < 0
-%         taua = kH * (tha_lim0 - z(2)) - cH * z(6);
+    if z(3) > tha_lim1 && z(7) > 0
+        tauh = kH * (thh_lim1 - z(3)) - cH * z(7);
+    elseif z(3) <= thh_lim0 && z(7) < 0
+        tauh = kH * (thh_lim0 - z(3)) - cH * z(7);
+    end
+%     if z(2) < tha_lim0 && z(6) < 0
+%         taua = k * (tha_lim0 - z(2)) - c*z(6);
+%     elseif z(2) > tha_lim1 && z(6) > 0
+%         taua = k * (tha_lim1 - z(2)) - c*z(6);
 %     end
 
     u = [taua; tauh; taus];
