@@ -165,13 +165,21 @@ function u = control_laws(t,z,ctrl,iphase)
         taus = 0;
         
         %Leg control
+        K = 50;
+        b = 0.5;
+%         des_thih = 0;
+        des_this = -pi/4;
 %         if t >= ctrl.tih 
 %             tauh = -inv_Kt*z(7) + 0.85;
+%         else
+%             tauh = K*(0-z(3))+b*(0-z(7)); % Keep hip stationary
 %         end
-%         %Arm control
-%         if t >= ctrl.tis 
-%             taus = -inv_Kt*z(8) + 0.85;
-%         end
+        %Arm control
+        if t >= ctrl.tis 
+            taus = -inv_Kt*z(8) + 0.85;
+        else
+            taus = K*(des_this-z(4))+b*(0-z(8)); % Keep shoulder down
+        end
 
         %Create control vector
         u = [taua; tauh; taus];
