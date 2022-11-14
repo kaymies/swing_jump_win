@@ -28,16 +28,17 @@ function [peak] = run_simulation(tis,input)
     %         taus = BezierCurve(ctrl.Ts, t/ctrl.tfs);
 
 
-% set guess
-tf = 2;                                        % simulation final time
-ctrl.tih = 1;
-ctrl.tfh = 1;                                  % control time points for hip - updated KS
-ctrl.Th = [0.1 0.1];                               % control values for hip - updated KS
-% ctrl.Th = [0 0];
-ctrl.tis = 1;
-ctrl.tfs = 1;                                  % control time points for shoulder - updated KS
-ctrl.Ts = [0.1 0.1];                               % control values for shoulder - updated KS
-% ctrl.Ts = [0 0];
+    % set guess
+    tf = 2;                                        % simulation final time
+    ctrl.tih = 0.5;
+    ctrl.tfh = 3;                                  % control time points for hip - updated KS
+    ctrl.Th = [0.1 0.1];                               % control values for hip - updated KS
+    % ctrl.Th = [0 0];
+%     ctrl.tis = 1;
+    ctrl.tis = tis;
+    ctrl.tfs = 1;                                  % control time points for shoulder - updated KS
+    ctrl.Ts = [0.1 0.1];                               % control values for shoulder - updated KS
+    % ctrl.Ts = [0 0];
 
 
     % x = [tf, ctrl.tf, ctrl.T];
@@ -144,14 +145,13 @@ ctrl.Ts = [0.1 0.1];                               % control values for shoulder
         % xlabel('time (s)')
         % ylabel('torque (Nm)')
         % title('Control Input Trajectory')
-
+    end
     %%
     % Run the animation
     if input.AnimOn
         figure(3)                          % get the coordinates of the points to animate
-        speed = 0.5;                                 % set animation speed
+        speed = 0.1;                                 % set animation speed
         clf                                         % clear fig
         animate_simple(t,z,p,speed)                 % run animation
     end
 end
-
