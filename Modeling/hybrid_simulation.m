@@ -119,9 +119,6 @@ function [dz, u] = dynamics_continuous(t,z,ctrl,p,iphase)
     % 03 Nov 2022 - updated dz to be 8x1 vector instead of 4x1 - SG
     u = control_laws(t,z,ctrl,iphase);  % get controls at this instant
     u2 = control_contacts(t,z);
-    if (u2 == [0;0;0])
-        a = 1;
-    end
     u = u + u2;
 %     u = [0;0;0];
 
@@ -169,7 +166,7 @@ function u = control_laws(t,z,ctrl,iphase)
         K = 50;
         b = 0.5;
 %         des_thih = 0;
-        des_this = -pi/4;
+        des_this = -pi/2;
         if t >= ctrl.tih 
             tauh = -inv_Kt*z(7) + 0.85;
         end
@@ -214,35 +211,30 @@ function u = control_contacts(t,z)
 
     %SG - hip joint spring limiter instead of hard contact - 13 Nov 2022
     thh_lim0 = deg2rad(180-143); %Minimum angle
-%     thh_lim0 = 0.45; %25
     thh_lim1 = deg2rad(180-106); %Maximum angle
-%     thh_lim1 = 1.22; %70
-    kH = 500;
+    kH = 5000;
     cH = 0;
-    if z(3) > thh_lim1 %&& z(7) > 0
+    if z(3) > thh_lim1
         tauh = kH * (thh_lim1 - z(3)) - cH * z(7);
-    elseif z(3) <= thh_lim0 %&& z(7) < 0
+    elseif z(3) <= thh_lim0
         tauh = kH * (thh_lim0 - z(3)) - cH * z(7);
-%         hip_min = 1;
     end
 
-%     if hip_min
-%         
-%         if z(3) > thh_lim0
-%             hip_min = 0;
-%         end
-%     elseif hip_max
-% 
-%     end
 
-%     tauh = 0;
-%         % Ankle joint limit angle
-%     tha_lim0 = deg2rad(-60); %Minimum angle
-%     tha_lim1 = deg2rad(0); %Maximum
-%     if z(2) > tha_lim1 && z(6) > 0
-%         taua = kH * (tha_lim1 - z(3)) - cH * z(76);
-%     elseif z(2) <= tha_lim0 && z(6) < 0
-%         taua = kH * (tha_lim0 - z(2)) - cH * z(6);
+    % Ankle joint limit angle, RELATIVE TO LEG
+%     kA = 500;
+%     tha_rel_lim0 = deg2rad(45); %Angle between heel and back of lower leg (positive CCW)
+%     tha_lim0 = z(3) + tha_rel_lim0 - pi; %Equivalent angle for tha limit
+%     tha_rel_lim1 = deg2rad(125); %Angle between heel and back of lower leg (positive CCW)
+%     tha_lim1 = z(3) + tha_rel_lim1 - pi; %Equivalent angle for tha limit
+% 
+%     
+%     if z(2) <= tha_lim0
+%         taua = kA * (tha_lim0 - z(2)) - cH * z(6);
+% %         tauh = tauh - taua;
+%     elseif z(2) >= tha_lim1
+%         taua = kA * (tha_lim1 - z(2)) - cH * z(6);
+% %         tauh = tauh - taua;
 %     end
 
     u = [taua; tauh; taus];

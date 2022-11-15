@@ -29,7 +29,7 @@ function [peak] = run_simulation(tis,input)
 
 
     % set guess
-    tf = 2;                                        % simulation final time
+    tf = 1;                                        % simulation final time
     ctrl.tih = 0.5;
     ctrl.tfh = 3;                                  % control time points for hip - updated KS
     ctrl.Th = [0.1 0.1];                               % control values for hip - updated KS
@@ -64,7 +64,7 @@ function [peak] = run_simulation(tis,input)
 
     [t, z, u, indices] = hybrid_simulation(z0,ctrl,p,[0 tf]); % run simulation
     COM = COM_swing_jump_win(z,p);
-    [peak, t_peak] = find_first_peak(t,COM);
+    [peak, t_peak] = find_first_peak(t,COM,ctrl.tih);
     %% Plot COM for your submissions
     if input.PlotOn
         figure(1)
