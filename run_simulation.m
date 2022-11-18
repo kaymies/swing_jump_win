@@ -75,8 +75,13 @@ function [peak] = run_simulation(tis,input)
         title('Center of Mass Trajectory')
 
         figure(2); clf
+        yyaxis left
         plot(t,z(3,:))
-        title("Hip angle")
+        hold on
+        yyaxis right
+        plot(t,mod(z(4,:),2*pi))
+        title("Hip v arm angle")
+        legend("hip","arm")
 
         %UPDATED - EK 
         %03 Nov 2022 - max torque in leg and arm
