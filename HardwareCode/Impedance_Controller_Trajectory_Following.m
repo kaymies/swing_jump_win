@@ -23,12 +23,13 @@ angle1_init = -pi/2; %shoulder
 angle2_init = 0; %hip
 
 % Total experiment time is buffer,trajectory,buffer
-traj_time         = 3.0;
+traj_time         = 5.0;
 pre_buffer_time   = 0; % this should be 0 for constant points, 2 for Bezier trajectories
 post_buffer_time  = 0;
 
-tis = 0.3; %shoulder start time
-tih = 0.5; %hip start time
+tis = 0.1; %shoulder start time
+tih = 0; %hip start time
+tihend = 0.2;
 
 tipre = 0.01;
 thpre = 0.5;%deg2rad(5); 
@@ -38,20 +39,20 @@ th2_limu = 1.0;
 % If a gain is not being used in your Mbed code, set it to zero
 % For joint space control, use K_xx for K1, K_yy for K2, D_xx for D1, D_yy for D2
 gains.K_xx = 2.0; %K1
-gains.K_yy = 2.0; %100.0; %K2
+gains.K_yy = 100.0; %100.0; %K2
 gains.K_xy = 0;
 
 gains.D_xx = 0.05; %D1
-gains.D_yy = 0.05; %0.01; %D2
+gains.D_yy = 0.01; %0.01; %D2
 gains.D_xy = 0;
 
 % Maximum duty cycle commanded by controller (should always be <=1.0)
-duty_max = 0.8;
+duty_max = 1.0;
 
 %% Run Experiment
 [output_data] = Experiment_trajectory( angle1_init, angle2_init, pts_foot,...
                                        traj_time, pre_buffer_time, post_buffer_time,...
-                                       gains, duty_max, tis, tih, tipre, thpre, th2_limu);
+                                       gains, duty_max, tis, tih, tipre, thpre, th2_limu, tihend);
 
 %% Extract data
 t = output_data(:,1);

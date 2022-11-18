@@ -1,4 +1,4 @@
-function output_data = Experiment_trajectory( angle1_init, angle2_init, pts_foot, traj_time, pre_buffer_time, post_buffer_time, gains, duty_max, tis, tih, tipre, thpre, th2_limu)
+function output_data = Experiment_trajectory( angle1_init, angle2_init, pts_foot, traj_time, pre_buffer_time, post_buffer_time, gains, duty_max, tis, tih, tipre, thpre, th2_limu, tihend)
     
     % Figure for plotting motor data
     figure(1);  clf;       
@@ -173,7 +173,7 @@ function output_data = Experiment_trajectory( angle1_init, angle2_init, pts_foot
     input = [start_period traj_time end_period];
     input = [input angle1_init angle2_init];
     input = [input K_xx K_yy K_xy D_xx D_yy D_xy];
-    input = [input duty_max tis tih tipre thpre th2_limu];
+    input = [input duty_max tis tih tipre thpre th2_limu tihend];
     input = [input pts_foot(:)']; % final size of input should be 28x1
     
     params.timeout  = (start_period+traj_time+end_period);  
