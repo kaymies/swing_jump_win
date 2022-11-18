@@ -1,7 +1,7 @@
 close all; clear all; clc;
 
-input.AnimOn = 1;
-input.PlotOn = 1;
+input.AnimOn = 0;
+input.PlotOn = 0;
 
 % baseline_peak = run_simulation(1,input); %Peak with no arm swing
 

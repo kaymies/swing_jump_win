@@ -64,7 +64,7 @@ function [peak] = run_simulation(tis,input)
 
     [t, z, u, indices] = hybrid_simulation(z0,ctrl,p,[0 tf]); % run simulation
     COM = COM_swing_jump_win(z,p);
-    [peak, t_peak] = find_first_peak(t,COM,ctrl.tih);
+    [peak, t_peak] = find_first_peak(t,z(1,:),ctrl.tih);
     %% Plot COM for your submissions
     if input.PlotOn
         figure(1)
