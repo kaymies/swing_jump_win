@@ -106,26 +106,26 @@ function output_data = Experiment_trajectory( angle1_init, angle2_init, pts_foot
         
         % Update motor data plots
         h1.XData(end+1:end+N) = t;   
-        h1.YData(end+1:end+N) = -pos1; % switch sign on all plotted values due to direction motors are mounted
+        h1.YData(end+1:end+N) = pos1; % switch sign on all plotted values due to direction motors are mounted
         h2.XData(end+1:end+N) = t;   
-        h2.YData(end+1:end+N) = -vel1;
+        h2.YData(end+1:end+N) = vel1;
         h3.XData(end+1:end+N) = t;   
-        h3.YData(end+1:end+N) = -cur1;
+        h3.YData(end+1:end+N) = cur1;
         h4.XData(end+1:end+N) = t;   
-        h4.YData(end+1:end+N) = -dcur1;
+        h4.YData(end+1:end+N) = dcur1;
         h5.XData(end+1:end+N) = t;   
-        h5.YData(end+1:end+N) = -duty1;
+        h5.YData(end+1:end+N) = duty1;
         
         h21.XData(end+1:end+N) = t;   
-        h21.YData(end+1:end+N) = -pos2;
+        h21.YData(end+1:end+N) = pos2;
         h22.XData(end+1:end+N) = t;   
-        h22.YData(end+1:end+N) = -vel2;
+        h22.YData(end+1:end+N) = vel2;
         h23.XData(end+1:end+N) = t;   
-        h23.YData(end+1:end+N) = -cur2;
+        h23.YData(end+1:end+N) = cur2;
         h24.XData(end+1:end+N) = t;   
-        h24.YData(end+1:end+N) = -dcur2;
+        h24.YData(end+1:end+N) = dcur2;
         h25.XData(end+1:end+N) = t;   
-        h25.YData(end+1:end+N) = -duty2;
+        h25.YData(end+1:end+N) = duty2;
         
         % Calculate leg state and update plots
         z = [pos1(end) pos2(end) vel1(end) vel2(end)]';

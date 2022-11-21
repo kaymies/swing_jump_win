@@ -29,11 +29,11 @@ post_buffer_time  = 0;
 
 tis = 0.1; %shoulder start time
 tih = 0; %hip start time
-tihend = 0.2;
+tihend = 1.0;
 
 tipre = 0.01;
 thpre = 0.5;%deg2rad(5); 
-th2_limu = 1.0;
+th2_limu = -1.0;
 
 % Gains for impedance controller
 % If a gain is not being used in your Mbed code, set it to zero
@@ -56,10 +56,10 @@ duty_max = 1.0;
 
 %% Extract data
 t = output_data(:,1);
-x = -output_data(:,12); % actual foot position in X (negative due to direction motors are mounted)
+x = output_data(:,12); % actual foot position in X (negative due to direction motors are mounted)
 y = output_data(:,13); % actual foot position in Y
    
-xdes = -output_data(:,16); % desired foot position in X (negative due to direction motors are mounted)
+xdes = output_data(:,16); % desired foot position in X (negative due to direction motors are mounted)
 ydes = output_data(:,17); % desired foot position in Y
 
 %% Plot foot vs desired
