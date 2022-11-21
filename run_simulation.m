@@ -29,38 +29,47 @@ function [peak] = run_simulation(tis,input)
 
 
     % set guess
-    tf = 1;                                        % simulation final time
-    ctrl.tih = 0.5;
-    ctrl.tfh = 3;                                  % control time points for hip - updated KS
-    ctrl.Th = [0.1 0.1];                               % control values for hip - updated KS
+%     tf = 2;                                        % simulation final time
+    tih = 0.5;
+    ctrl.tih = tih;
+%     ctrl.tfh = 3;                                  % control time points for hip - updated KS
+%     ctrl.Th = [0.1 0.1];                               % control values for hip - updated KS
     % ctrl.Th = [0 0];
 %     ctrl.tis = 1;
+    tis = 0.2;
     ctrl.tis = tis;
-    ctrl.tfs = 1;                                  % control time points for shoulder - updated KS
-    ctrl.Ts = [0.1 0.1];                               % control values for shoulder - updated KS
+%     ctrl.tfs = 1;                                  % control time points for shoulder - updated KS
+%     ctrl.T = [0.1 0.1];                               % control values for shoulder - updated KS
     % ctrl.Ts = [0 0];
+    
+    tf = 0.5;                                        % simulation final time
+    % tf = 0.6;                                        % simulation final time
+    ctrl.tf = 0.5;                                  % control time points
+    ctrl.T = [0.5 0.5 0.5];                               % control values
 
 
-    % x = [tf, ctrl.tf, ctrl.T];
+    x = [tf, ctrl.tf, ctrl.T];
     % % setup and solve nonlinear programming problem
-    % problem.objective = @(x) objective(x,z0,p);     % create anonymous function that returns objective
-    % problem.nonlcon = @(x) constraints(x,z0,p);     % create anonymous function that returns nonlinear constraints
-    % problem.x0 = [tf ctrl.tf ctrl.T];                   % initial guess for decision variables
-    % problem.lb = [.4 .1 -2*ones(size(ctrl.T))];     % lower bound on decision variables
-    % problem.ub = [1  1   2*ones(size(ctrl.T))];     % upper bound on decision variables
-    % problem.Aineq = []; problem.bineq = [];         % no linear inequality constraints
-    % problem.Aeq = []; problem.beq = [];             % no linear equality constraints
-    % problem.options = optimset('Display','iter');   % set options
-    % problem.solver = 'fmincon';                     % required
-    % x = fmincon(problem);                           % solve nonlinear programming problem
+    problem.objective = @(x) objective(x,z0,p,tih,tis);     % create anonymous function that returns objective
+    problem.nonlcon = @(x) constraints(x,z0,p,tih,tis);     % create anonymous function that returns nonlinear constraints
+    problem.x0 = [tf ctrl.tf ctrl.T];                   % initial guess for decision variables
+%     problem.lb = [.4 .1 -2*ones(size(ctrl.T))];     % lower bound on decision variables
+    problem.ub = [1  1   2*ones(size(ctrl.T))];     % upper bound on decision variables
+    problem.Aineq = []; problem.bineq = [];         % no linear inequality constraints
+    problem.Aeq = []; problem.beq = [];             % no linear equality constraints
+    problem.options = optimset('Display','iter');   % set options
+    problem.solver = 'fmincon';                     % required
+    x = fmincon(problem);                           % solve nonlinear programming problem
 
     % Note that once you've solved the optimization problem, you'll need to 
     % re-define tf, tfc, and ctrl here to reflect your solution.
 
     %Extract solved parameters
-    % tf = x(1);
-    % ctrl.tf = x(2);
-    % ctrl.T = x(3:end);
+    tf = x(1);
+    ctrl.tf = x(2);
+    ctrl.T = x(3:end);
+    ctrl.tih = tih;
+    ctrl.tis = tis;
 
     [t, z, u, indices] = hybrid_simulation(z0,ctrl,p,[0 tf]); % run simulation
     COM = COM_swing_jump_win(z,p);
