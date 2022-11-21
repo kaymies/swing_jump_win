@@ -170,10 +170,11 @@ function u = control_laws(t,z,ctrl,iphase)
         b = 0.5;
 %         des_thih = 0;
         des_this = -pi/4;
-%         if t >= ctrl.tih 
-%             tauh = -inv_Kt*z(7) + 0.85;
+        if t >= ctrl.tih 
+            tauh = -inv_Kt*z(7) + 0.85;
+        end
 %         else
-%             tauh = K*(0-z(3))+b*(0-z(7)); % Keep hip stationary
+%             tauh = K*(des_thih-z(3))+b*(0-z(7)); % Keep hip stationary
 %         end
         %Arm control
         if t >= ctrl.tis 
