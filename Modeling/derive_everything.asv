@@ -183,7 +183,7 @@ matlabFunction(Jt,'file',[directory 'J_toe_' name],'vars',{z p}); %Toe Jacobian
 
 %Ankle parameters
 Ja = jacobian(ra,q);
-Ja = Ja(1:2,1:4);
+Ja = Ja(1:2,1:4)
 va = ddt(ra);
 matlabFunction(ra(1:2),'file',[directory 'r_ank_' name],'vars',{z p}); %ankle position
 matlabFunction(va(1:2),'file',[directory 'v_ank_' name],'vars',{z p}); %ankle velocity
@@ -197,14 +197,12 @@ matlabFunction(re1(1:2),'file',[directory 'r_heel_' name],'vars',{z p}); %heel p
 matlabFunction(ve1(1:2),'file',[directory 'v_heel_' name],'vars',{z p}); %heel velocity
 matlabFunction(Je1,'file',[directory 'J_heel_' name],'vars',{z p}); %heel Jacobian
 
-%Finger parameters
-Jf = jacobian(rf,q);
-Jf = Jf(1:2,1:4)
-inv(Jf
-vf = ddt(rf);
-rf
-matlabFunction(rf(1:2),'file',[directory 'r_finger_' name],'vars',{z p}); % position
-matlabFunction(vf(1:2),'file',[directory 'v_finger_' name],'vars',{z p}); % velocity
-matlabFunction(Jf,'file',[directory 'J_finger_' name],'vars',{z p}); % Jacobian
+%Hip parameters
+Jh = jacobian(rh,q);
+Jh = Jh(1:2,1:4);
+vh = ddt(rh);
+matlabFunction(rh(1:2),'file',[directory 'r_hip_' name],'vars',{z p}); % position
+matlabFunction(vh(1:2),'file',[directory 'v_hip_' name],'vars',{z p}); % velocity
+matlabFunction(Jh,'file',[directory 'J_hip_' name],'vars',{z p}); % Jacobian
 
 
