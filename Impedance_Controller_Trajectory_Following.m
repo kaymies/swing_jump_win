@@ -10,40 +10,42 @@
 % const_point = [-0.16; -0.14];
 const_point = [-0.16; -0.14]; %[x;y] or [q1,q2] constant coordinate (x,q1,q2 coordinates should be opposite sign due to direction motors are mounted)
 pts_foot = repmat(const_point,1,8);
-pts_foot = [    0.0315    0.0315    0.0315    0.0911   -0.1857   -0.1857   -0.1857   -0.1857
-   -0.2095   -0.2095   -0.2095   -0.0681   -0.0015   -0.1008   -0.1008   -0.1008];
-       
+% pts_foot = [    0.0315    0.0315    0.0315    0.0911   -0.1857   -0.1857   -0.1857   -0.1857
+%    -0.2095   -0.2095   -0.2095   -0.0681   -0.0015   -0.1008   -0.1008   -0.1008];
+ 
+% pts_foot = [    0.0315    0.0315    0.0315    0.0911   -0.1857   -0.1857   -0.1857   -0.1857
+%    -0.2095   -0.2095   -0.2095   -0.0681   -0.0015   -0.1008   -0.1008   -0.1008];
+
 %pts_foot = []; % YOUR BEZIER PTS HERE
 
 % Initial leg angles for encoder resets (negative of q1,q2 in lab handout due to direction motors are mounted)
-angle1_init = 0; %shoulder
+angle1_init = -pi/2; %shoulder
 angle2_init = 0; %hip
 
 % Total experiment time is buffer,trajectory,buffer
-traj_time         = 6;
+traj_time         = 3.0;
 pre_buffer_time   = 0; % this should be 0 for constant points, 2 for Bezier trajectories
-post_buffer_time  = 2;
+post_buffer_time  = 2
+tis = 0.3; %shoulder start time
+tih = 0.5; %hip start time
 
-tis = 0.7; %shoulder start time
-tih = 1.5; %hip start time
-
-tipre = 0.1;
+tipre = 0.01;
 thpre = 0.5;%deg2rad(5); 
 th2_limu = 1.0;
 
 % Gains for impedance controller
 % If a gain is not being used in your Mbed code, set it to zero
 % For joint space control, use K_xx for K1, K_yy for K2, D_xx for D1, D_yy for D2
-gains.K_xx = 60.0; %K1
-gains.K_yy = 100.0; %K2
+gains.K_xx = 2.0; %K1
+gains.K_yy = 2.0; %100.0; %K2
 gains.K_xy = 0;
 
-gains.D_xx = 0.01; %D1
-gains.D_yy = 0.01; %D2
+gains.D_xx = 0.05; %D1
+gains.D_yy = 0.05; %0.01; %D2
 gains.D_xy = 0;
 
 % Maximum duty cycle commanded by controller (should always be <=1.0)
-duty_max = 1.0;
+duty_max = 0.8;
 
 %% Run Experiment
 [output_data] = Experiment_trajectory( angle1_init, angle2_init, pts_foot,...
