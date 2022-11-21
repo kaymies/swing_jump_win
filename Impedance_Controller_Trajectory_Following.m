@@ -31,7 +31,7 @@ tih = 0.5; %hip start time
 
 tipre = 0.01;
 thpre = 0.5;%deg2rad(5); 
-th2_limu = 1.0;
+th2_limu = -1.0;
 
 % Gains for impedance controller
 % If a gain is not being used in your Mbed code, set it to zero
