@@ -1,4 +1,4 @@
-% function [peak] = run_simulation(tis,input)
+function [peak] = run_simulation(tis,input)
 %     clear all; close all; clc;
 
     % We can organize our code by filing things in different folders.  These
@@ -11,9 +11,6 @@
     setpath                                     % add AutoDerived, Modeling, and Visualization folders to Matlab path
 
     p = parameters();                           % get parameters from file
-
-    input.AnimOn = 1;
-    input.PlotOn = 0;
 
     %Tip foot
 %     z0 = [0.1318; -1.0472; 0.6454; -pi/2;...
@@ -32,16 +29,16 @@
 
 
     % set guess
-    tf = 2;                                        % simulation final time
-    ctrl.tih = 2;
-    ctrl.tfh = 3;                                  % control time points for hip - updated KS
+    tf = 1;                                        % simulation final time
+    ctrl.tih = 0.5;
+    ctrl.tfh = 1;                                  % control time points for hip - updated KS
     ctrl.Th = [0.1 0.1];                               % control values for hip - updated KS
-    ctrl.Th = [0 0];
+%     ctrl.Th = [0 0];
 
-    ctrl.tis = 2;
-    ctrl.tfs = 2;                                  % control time points for shoulder - updated KS
+    ctrl.tis = tis;
+    ctrl.tfs = 1;                                  % control time points for shoulder - updated KS
     ctrl.Ts = [0.1 0.1];                               % control values for shoulder - updated KS
-    ctrl.Ts = [0 0];
+%     ctrl.Ts = [0 0];
 
 
     % x = [tf, ctrl.tf, ctrl.T];
@@ -67,7 +64,7 @@
 
     [t, z, u, indices] = hybrid_simulation(z0,ctrl,p,[0 tf]); % run simulation
     COM = COM_swing_jump_win(z,p);
-%     [peak, t_peak] = find_first_peak(t,COM);
+    [peak, t_peak] = find_first_peak(t,z(1,:),COM,ctrl.tih,ctrl.tis);
     %% Plot COM for your submissions
     if input.PlotOn
         figure(1)
@@ -153,8 +150,8 @@
     % Run the animation
     if input.AnimOn
         figure(3)                          % get the coordinates of the points to animate
-        speed = 1;                                 % set animation speed
+        speed = 0.1;                                 % set animation speed
         clf                                         % clear fig
         animate_simple(t,z,p,speed)                 % run animation
     end
-% end
+end
