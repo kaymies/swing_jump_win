@@ -153,7 +153,7 @@
     % Run the animation
     if input.AnimOn
         figure(3)                          % get the coordinates of the points to animate
-        speed = 1;                                 % set animation speed
+        speed = 0.5;                                 % set animation speed
         clf                                         % clear fig
         animate_simple(t,z,p,speed)                 % run animation
     end

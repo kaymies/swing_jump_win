@@ -102,12 +102,12 @@ function qdot = discrete_impact_contact(z,p)
     % SG - Add joint position constraints - 07 Nov 2022
     
 %     Ankle joint limit angle
-    tha_lim0 = deg2rad(-60); %Minimum angle
-    tha_lim1 = deg2rad(0); %Maximum
-    if z(2) < tha_lim0 && qdot(2) < 0
+    tha_lim0 = deg2rad(30); %Minimum angle
+    tha_lim1 = deg2rad(95); %Maximum
+    if z(2) < tha_lim0 %&& qdot(2) < 0
         qdot(2) = 0;
-%     elseif z(2) > tha_lim1 && qdot(2) > 0
-%         qdot(2) = 0;
+    elseif z(2) > tha_lim0 %&& qdot(2) > 0
+        qdot(2) = 0;
     end
 
 
@@ -118,7 +118,9 @@ function [dz, u] = dynamics_continuous(t,z,ctrl,p,iphase)
     %UPDATED - SG
     % 03 Nov 2022 - updated dz to be 8x1 vector instead of 4x1 - SG
     u = control_laws(t,z,ctrl,iphase);  % get controls at this instant
+%     u = [0;0;0];
     u2 = control_contacts(t,z);
+%     u2 = [0;0;0];
     if (u2 == [0;0;0])
         a = 1;
     end
@@ -166,7 +168,7 @@ function u = control_laws(t,z,ctrl,iphase)
         
         %Leg control
 
-        K = 50;
+        K = 10;
         b = 0.5;
 %         des_thih = 0;
         des_this = -pi/4;
@@ -180,7 +182,7 @@ function u = control_laws(t,z,ctrl,iphase)
         if t >= ctrl.tis 
             taus = -inv_Kt*z(8) + 0.85;
         else
-            taus = K*(des_this-z(4))+b*(0-z(8)); % Keep shoulder down
+%             taus = K*(des_this-z(4))+b*(0-z(8)); % Keep shoulder down
         end
 
 
@@ -218,7 +220,7 @@ function u = control_contacts(t,z)
     thh_lim1 = deg2rad(180-106); %Maximum angle
 %     thh_lim1 = 1.22; %70
     kH = 500;
-    cH = 0;
+    cH = 0.5;
     if z(3) > thh_lim1 %&& z(7) > 0
         tauh = kH * (thh_lim1 - z(3)) - cH * z(7);
     elseif z(3) <= thh_lim0 %&& z(7) < 0
