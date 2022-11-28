@@ -84,12 +84,8 @@ function qdot = discrete_impact_contact(z,p)
 %     Ankle joint limit angle
     tha_lim0 = deg2rad(30); %Minimum angle
     tha_lim1 = deg2rad(95); %Maximum
-    k = 500;
-    c = 0.1;
     if z(2) < tha_lim0 && qdot(2) < 0
-%         qdot(2) = qdot(2) + (k * (tha_lim0 - z(2)) - c * z(6));
-        qdot(2) = -0.98*qdot(2);
-        qdot(2) = 0;
+        qdot(2) = -1*qdot(2);
     elseif z(2) > tha_lim1 && qdot(2) > 0
         qdot(2) = 0;
     end
@@ -186,18 +182,8 @@ function u = control_laws(t,z,ctrl,iphase)
         bs = 0.5;
         if t >= ctrl.tis 
             %Run shoulder with PD matching to final position
-            taus = Ks*(ctrl.thsf - z(4)) + bs*(0-z(8));
-
-            taus_lim = -inv_Kt*abs(z(8)) + 0.85;
-
-            if abs(taus) > taus_lim
-                %cap off taus at limit;
-                if taus < 0
-                    taus = -1*taus_lim;
-                else
-                    taus = taus_lim;
-                end
-            end
+            taus = Ks*(ctrl.thsi - z(4))+ bs*(0-z(8));
+            taus = -inv_Kt*z(8) + 0.85;
         else
             % Hold shoulder at init postn.
             taus = Ks*(ctrl.thsi - z(4))+ bs*(0-z(8)); 

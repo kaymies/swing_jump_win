@@ -38,9 +38,10 @@ function [peak] = run_simulation(tis,input)
     ctrl.tfh = 3;                                  % control time points for hip - updated KS
     ctrl.Th = [0.1 0.1];                               % control values for hip - updated KS
 %     ctrl.Th = [0 0];
-%     ctrl.tis = 1;
     ctrl.tis = tis;
     ctrl.tfs = 1;                                  % control time points for shoulder - updated KS
+    ctrl.thsi = -pi/2;
+    ctrl.thsf = 3*pi/4;
     ctrl.Ts = [0.1 0.1];                               % control values for shoulder - updated KS
     % ctrl.Ts = [0 0];
 
@@ -101,11 +102,11 @@ function [peak] = run_simulation(tis,input)
         legend("Ankle torque", "Hip torque","Shoulder Torque")
 
         figure(5)
-        plot(t,z(2,:))
+        plot(t,z(6,:))
         hold on
-%         plot(t,z(3,:))
+        plot(t,z(7,:))
         hold on
-%         plot(t,z(4,:))
+        plot(t,z(8,:))
         xlabel('time (s)')
         ylabel('Angular Velocity (rad/s)')
         title('Velocity Trajectory')
