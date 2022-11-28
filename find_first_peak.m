@@ -30,10 +30,10 @@ end
 y_new = y_new(1:j_end);
 t_new = t_new(1:j_end);
 
-figure
-hold on
-plot(t,y)
-plot(t_new,y_new)
+% figure
+% hold on
+% plot(t,y)
+% plot(t_new,y_new)
 
 % Find the peaks and mark first peak
 [peaks, locs] = findpeaks(y_new,t_new,"MinPeakHeight",y_ground);

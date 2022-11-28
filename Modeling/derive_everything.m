@@ -36,7 +36,9 @@ jhat = [0; 1; 0];
 khat = cross(ihat,jhat);
 
 % Define other unit vectors for use in defining other vectors.
-er0hat = cos(-tha)*ihat - sin(-tha)*jhat;
+phi = thh - tha + pi;
+er0hat = -cos(phi)*ihat - sin(phi)*jhat;
+% er0hat = cos(tha)*ihat - sin(tha)*jhat; %Old version of ankle, globally defined
 er1hat =  -cos(thh)*ihat - sin(thh)*jhat;
 er2hat = cos(thh)*ihat - sin(thh)*jhat;
 er4hat = sin(ths)*ihat - cos(ths)*jhat;

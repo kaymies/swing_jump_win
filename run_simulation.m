@@ -12,13 +12,17 @@ function [peak] = run_simulation(tis,input)
 
     p = parameters();                           % get parameters from file
 
+%     input.AnimOn = 1;
+%     input.PlotOn = 1;
+%     tis = 1;
+
     %Tip foot
-    z0 = [0.1318; -1.0472; 0.6454; -pi/2;...
+    z0 = [0.15; pi/2; 0.6454; -pi/2;...
           0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
 
-    % %Foot flat
-    % z0 = [0.2; 0; 0.64546; -pi/2;...
-    %       0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
+    %Foot flat
+%     z0 = [0.2; pi/2; 0.64546; -pi/2;...
+%           0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
 
     % z0 = [0.1; -pi/4; pi/4; pi/2;...
     %       0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
@@ -33,7 +37,7 @@ function [peak] = run_simulation(tis,input)
     ctrl.tih = 0.5;
     ctrl.tfh = 3;                                  % control time points for hip - updated KS
     ctrl.Th = [0.1 0.1];                               % control values for hip - updated KS
-    % ctrl.Th = [0 0];
+%     ctrl.Th = [0 0];
 %     ctrl.tis = 1;
     ctrl.tis = tis;
     ctrl.tfs = 1;                                  % control time points for shoulder - updated KS
@@ -97,11 +101,11 @@ function [peak] = run_simulation(tis,input)
         legend("Ankle torque", "Hip torque","Shoulder Torque")
 
         figure(5)
-        plot(t,z(6,:))
+        plot(t,z(2,:))
         hold on
-        plot(t,z(7,:))
+%         plot(t,z(3,:))
         hold on
-        plot(t,z(8,:))
+%         plot(t,z(4,:))
         xlabel('time (s)')
         ylabel('Angular Velocity (rad/s)')
         title('Velocity Trajectory')
