@@ -88,8 +88,8 @@ function qdot = discrete_impact_contact(z,p)
     c = 0.1;
     if z(2) < tha_lim0 && qdot(2) < 0
 %         qdot(2) = qdot(2) + (k * (tha_lim0 - z(2)) - c * z(6));
-        qdot(2) = -0.98*qdot(2);
-        qdot(2) = 0;
+        qdot(2) = -1*qdot(2);
+%         qdot(2) = 0;
     elseif z(2) > tha_lim1 && qdot(2) > 0
         qdot(2) = 0;
     end
