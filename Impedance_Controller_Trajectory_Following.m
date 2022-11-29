@@ -25,7 +25,7 @@ angle2_init = 0; %hip
 % Total experiment time is buffer,trajectory,buffer
 traj_time         = 3.0;
 pre_buffer_time   = 0; % this should be 0 for constant points, 2 for Bezier trajectories
-post_buffer_time  = 2
+post_buffer_time  = 2;
 tis = 0.3; %shoulder start time
 tih = 0.5; %hip start time
 

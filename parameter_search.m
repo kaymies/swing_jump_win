@@ -1,6 +1,6 @@
-% close all; clear all; clc;
+close all; clear all; clc;
 
-input.AnimOn = 0;
+input.AnimOn = 1;
 input.PlotOn = 0;
 
 % baseline_peak = run_simulation(1,input); %Peak with no arm swing
@@ -8,8 +8,8 @@ ti = 0.5 - 0.12; %Time range based on how long it takes for the arm to swing
 tf = 0.5 + 0.17;
 % ti = 0.5 - 0.091;
 % tf = 0.5 + 0.034;
-tis = ti:0.0005:tf;
-tis = 0.5 - 0.0865;
+tis = ti:0.001:tf;
+tis = 0.5 +0.048;
 % tis = tis(1);
 peaks = zeros(1,length(tis));
 for i = 1:length(tis)
