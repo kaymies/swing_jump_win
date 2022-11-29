@@ -89,9 +89,11 @@ function qdot = discrete_impact_contact(z,p)
     if z(2) < tha_lim0 && qdot(2) < 0
 %         qdot(2) = qdot(2) + (k * (tha_lim0 - z(2)) - c * z(6));
         qdot(2) = -1*qdot(2);
+        z(2) = tha_lim0 + 0.01;
 %         qdot(2) = 0;
     elseif z(2) > tha_lim1 && qdot(2) > 0
         qdot(2) = 0;
+        z(2) = tha_lim1 - 0.01;
     end
 
 
@@ -129,24 +131,6 @@ function [dz, u] = dynamics_continuous(t,z,ctrl,p,iphase)
 %     u2 = [0;0;0];
     u = u + u2;
 %     u = [0;0;0];
-
-    % EK - Cap off torque
-%     max_torque = 0.85;
-%     if abs(u(2)) > max_torque % check on max torque to be within motor limits
-%         if u(2) > 0
-%             u(2) = max_torque;
-%         else
-%             u(2) = -max_torque;
-%         end
-%     end
-%     if abs(u(3)) > max_torque
-%         if u(3) > 0
-%             u(3) = max_torque;
-%         else
-%             u(3) = -max_torque;
-%         end
-%     end
-    %END EK
     A = A_swing_jump_win(z,p);                 % get full A matrix
     b = b_swing_jump_win(z,u,[0;0],p);               % get full b vector
     
@@ -170,15 +154,9 @@ function u = control_laws(t,z,ctrl,iphase)
         taus = 0;
         
         %Leg control
-        K = 50;
-        b = 0.5;
-%         des_thih = 0;
         if t >= ctrl.tih 
             tauh = -inv_Kt*z(7) + 0.85;
         end
-%         else
-%             tauh = K*(des_thih-z(3))+b*(0-z(7)); % Keep hip stationary
-%         end
 
 
         %Arm control
@@ -188,7 +166,7 @@ function u = control_laws(t,z,ctrl,iphase)
             %Run shoulder with PD matching to final position
             taus = Ks*(ctrl.thsf - z(4)) + bs*(0-z(8));
 
-            taus_lim = -inv_Kt*abs(z(8)) + 0.85;
+            taus_lim = max(-inv_Kt*abs(z(8)) + 0.85,0);
 
             if abs(taus) > taus_lim
                 %cap off taus at limit;
@@ -208,20 +186,6 @@ function u = control_laws(t,z,ctrl,iphase)
         %Create control vector
         u = [taua; tauh; taus];
 
-
-        %Updated - th and dth as vector of ankle, hip, shoulder angles - KS
-        % PD Control in flight
-%         th = z(2:4,:);            % leg angle
-%         dth = z(6:8,:);           % leg angular velocity
-% 
-%         thd = pi/4;             % desired leg angle
-%         k = 5;                  % stiffness (N/rad)
-%         b = 0.5;                 % damping (N/(rad/s))
-% 
-%         u = -k*(th-thd) - b*dth;% apply PD control
-%         u(1) = -k*(th(1)+thd) - b*dth(1); %Ankle want negative target angle
-%         u(1) = 0;
-
 end
 
 
@@ -235,8 +199,8 @@ function u = control_contacts(t,z)
     %SG - hip joint spring limiter instead of hard contact - 13 Nov 2022
     thh_lim0 = deg2rad(180-143); %Minimum angle
     thh_lim1 = deg2rad(180-106); %Maximum angle
-    kH = 500;
-    cH = 1;
+    kH = 100;
+    cH = 0.1;
     if z(3) > thh_lim1
         tauh = kH * (thh_lim1 - z(3)) - cH * z(7);
     elseif z(3) <= thh_lim0

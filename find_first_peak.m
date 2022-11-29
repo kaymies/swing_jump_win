@@ -51,15 +51,15 @@ end
 
 
 
-
-% % if (rand < 0.1)
-    figure
+% 
+% if (rand < 0.1)
+%     figure
 %     plot(t,COM(2,:))
     hold on
     plot(t,y);
     scatter(locs,peaks);
     scatter(t_max,peak_max,'r*')
     title(num2str(tis))
-% % end
+% end
 
 end
