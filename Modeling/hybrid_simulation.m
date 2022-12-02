@@ -172,46 +172,43 @@ function u = control_laws(t,z,ctrl,iphase)
         bs = 0.05;
 
         % PD control to match specified functions for th and dth
-        fun_th = ctrl.thsfun;
-        fun_dth = ctrl.dthsfun;
-
-        ths_target = fun_th(t);
-        dths_target = fun_dth(t);
-
-
-        taus = Ks*(ths_target - z(4)) + bs*(dths_target-z(8));
-
-        taus_lim = scalar * (max(tau_stall - inv_Kt * abs(z(8)),0));
-
-        if abs(taus) > taus_lim
-            %cap off taus at limit;
-            if taus < 0
-                taus = -1*taus_lim;
-            else
-                taus = taus_lim;
-            end
-        end
-
-
-%         if t >= ctrl.tis 
-%             %Run shoulder with PD matching to final position
-%             taus = Ks*(ctrl.thsf - z(4)) + bs*(0-z(8));
+%         fun_th = ctrl.thsfun;
+%         fun_dth = ctrl.dthsfun;
 % 
-%             taus_lim = scalar * (max(tau_stall - inv_Kt * abs(z(8)),0));
-% 
-%             if abs(taus) > taus_lim
-%                 %cap off taus at limit;
-%                 if taus < 0
-%                     taus = -1*taus_lim;
-%                 else
-%                     taus = taus_lim;
-%                 end
+%         ths_target = fun_th(t);
+%         dths_target = fun_dth(t);
+
+%         taus = Ks*(ths_target - z(4)) + bs*(dths_target-z(8));
+%         taus_lim = scalar * (max(tau_stall - inv_Kt * abs(z(8)),0));
+
+%         if abs(taus) > taus_lim
+%             %cap off taus at limit;
+%             if taus < 0
+%                 taus = -1*taus_lim;
+%             else
+%                 taus = taus_lim;
 %             end
-%         else
-%             % Hold shoulder at init postn.
-%             taus = Ks*(ctrl.thsi - z(4))+ bs*(0-z(8)); 
 %         end
 
+
+        if t >= ctrl.tis 
+            %Run shoulder with PD matching to final position
+            taus = Ks*(ctrl.thsf - z(4)) + bs*(0-z(8));
+
+            taus_lim = scalar * (max(tau_stall - inv_Kt * abs(z(8)),0));
+
+            if abs(taus) > taus_lim
+                %cap off taus at limit;
+                if taus < 0
+                    taus = -1*taus_lim;
+                else
+                    taus = taus_lim;
+                end
+            end
+        else
+            % Hold shoulder at init postn.
+            taus = Ks*(ctrl.thsi - z(4))+ bs*(0-z(8)); 
+        end
 
 
         %Create control vector

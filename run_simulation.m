@@ -44,10 +44,10 @@ function [peak] = run_simulation(tis,input)
     % ctrl.Ts = [0 0];
 
     %Trajectory functions for arm swing
-    ramp = @(t) t .* heaviside(t);
-    tfs = tis + (thsf - thsi)/dths;
-    ctrl.thsfun = @(t) dths * (ramp(t - tis) - ramp(t - tfs)) + thsi;
-    ctrl.dthsfun = @(t) dths * (heaviside(t - tis) - heaviside(t - tfs));
+%     ramp = @(t) t .* heaviside(t);
+%     tfs = tis + (thsf - thsi)/dths;
+%     ctrl.thsfun = @(t) dths * (ramp(t - tis) - ramp(t - tfs)) + thsi;
+%     ctrl.dthsfun = @(t) dths * (heaviside(t - tis) - heaviside(t - tfs));
 
 
 
