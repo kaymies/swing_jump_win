@@ -12,65 +12,55 @@ function [peak] = run_simulation(tis,input)
 
     p = parameters();                           % get parameters from file
 
+%     p(25) = input.k_curr;
+
 %     input.AnimOn = 1;
 %     input.PlotOn = 1;
 %     tis = 1;
 
     %Tip foot
-    z0 = [0.15; pi/2; 0.6454; -pi/2;...
+    z0 = [0.123; pi/2; 0.6454; -pi/2;...
           0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
 
     %Foot flat
 %     z0 = [0.2; pi/2; 0.64546; -pi/2;...
 %           0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
 
-    % z0 = [0.1; -pi/4; pi/4; pi/2;...
-    %       0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
 
-    %         tauh = BezierCurve(ctrl.Th, t/ctrl.tfh); %EDIT LATER TO MATCH CONTROL LAW
-    %         %Arm control
-    %         taus = BezierCurve(ctrl.Ts, t/ctrl.tfs);
-
+    dths = input.dths; %shoulder angular velocity
+    thsi = -pi/2; %Initial shoulder angle
+    thsf = 3*pi/4; %Final shoulder angle
 
     % set guess
-    tf = 1;                                        % simulation final time
+    tf = 1;                       % simulation final time
     ctrl.tih = 0.5;
-    ctrl.tfh = 3;                                  % control time points for hip - updated KS
-    ctrl.Th = [0.1 0.1];                               % control values for hip - updated KS
+    ctrl.tfh = 3;                 % control time points for hip - updated KS
+    ctrl.Th = [0.1 0.1];          % control values for hip - updated KS
 %     ctrl.Th = [0 0];
-    ctrl.tis = tis;
-    ctrl.tfs = 1;                                  % control time points for shoulder - updated KS
-    ctrl.thsi = -pi/2;
-    ctrl.thsf = 3*pi/4;
-    ctrl.Ts = [0.1 0.1];                               % control values for shoulder - updated KS
+    ctrl.tis = tis;             %Start time for shoulder
+    ctrl.thsi = thsi;            % Initial shoulder position
+    ctrl.thsf = thsf;           % Final shoulder position
+    ctrl.Ts = [0.1 0.1];          % control values for shoulder - updated KS
     % ctrl.Ts = [0 0];
 
+    %Trajectory functions for arm swing
+    ramp = @(t) t .* heaviside(t);
+    tfs = tis + (thsf - thsi)/dths;
+    ctrl.thsfun = @(t) dths * (ramp(t - tis) - ramp(t - tfs)) + thsi;
+    ctrl.dthsfun = @(t) dths * (heaviside(t - tis) - heaviside(t - tfs));
 
-    % x = [tf, ctrl.tf, ctrl.T];
-    % % setup and solve nonlinear programming problem
-    % problem.objective = @(x) objective(x,z0,p);     % create anonymous function that returns objective
-    % problem.nonlcon = @(x) constraints(x,z0,p);     % create anonymous function that returns nonlinear constraints
-    % problem.x0 = [tf ctrl.tf ctrl.T];                   % initial guess for decision variables
-    % problem.lb = [.4 .1 -2*ones(size(ctrl.T))];     % lower bound on decision variables
-    % problem.ub = [1  1   2*ones(size(ctrl.T))];     % upper bound on decision variables
-    % problem.Aineq = []; problem.bineq = [];         % no linear inequality constraints
-    % problem.Aeq = []; problem.beq = [];             % no linear equality constraints
-    % problem.options = optimset('Display','iter');   % set options
-    % problem.solver = 'fmincon';                     % required
-    % x = fmincon(problem);                           % solve nonlinear programming problem
 
-    % Note that once you've solved the optimization problem, you'll need to 
-    % re-define tf, tfc, and ctrl here to reflect your solution.
 
-    %Extract solved parameters
-    % tf = x(1);
-    % ctrl.tf = x(2);
-    % ctrl.T = x(3:end);
+    
 
     [t, z, u, indices] = hybrid_simulation(z0,ctrl,p,[0 tf]); % run simulation
     COM = COM_swing_jump_win(z,p);
     [peak, t_peak] = find_first_peak(t,z(1,:),COM,ctrl.tih,ctrl.tis);
-    %% Plot COM for your submissions
+
+
+
+
+%% Plot COM for your submissions
     if input.PlotOn
         figure(1)
         max(COM(2,:))
@@ -113,49 +103,17 @@ function [peak] = run_simulation(tis,input)
         legend("Ankle velocity", "Hip velocity","Shoulder velocity")
 
 
+        figure(7)
+        plot(t,z(8,:) .* u(3,:))
+        title("arm motor powervs time")
+        hold on
+
         figure(6)
         plot(t, energy_swing_jump_win(z,p))
         xlabel('time (s)')
         ylabel('Energy')
-
-% figure(2)  % control input profile
-% ctrl_t = linspace(0, ctrl.tf, 50);
-% ctrl_pt_t = linspace(0, ctrl.tf, length(ctrl.T));
-% n = length(ctrl_t);
-% ctrl_input = zeros(1,n);
-% 
-% for i=1:n
-%     ctrl_input(i) = BezierCurve(x(3:end),ctrl_t(i)/ctrl.tf);
-% end
-% 
-% hold on
-% plot(ctrl_t, ctrl_input);
-% plot(ctrl_pt_t, x(3:end), 'o');
-% hold off
-% xlabel('time (s)')
-% ylabel('torque (Nm)')
-% title('Control Input Trajectory')
-%%
-% Run the animation
-
-        % figure(2)  % control input profile
-        % ctrl_t = linspace(0, ctrl.tf, 50);
-        % ctrl_pt_t = linspace(0, ctrl.tf, length(ctrl.T));
-        % n = length(ctrl_t);
-        % ctrl_input = zeros(1,n);
-        % 
-        % for i=1:n
-        %     ctrl_input(i) = BezierCurve(x(3:end),ctrl_t(i)/ctrl.tf);
-        % end
-        % 
-        % hold on
-        % plot(ctrl_t, ctrl_input);
-        % plot(ctrl_pt_t, x(3:end), 'o');
-        % hold off
-        % xlabel('time (s)')
-        % ylabel('torque (Nm)')
-        % title('Control Input Trajectory')
     end
+
     %%
     % Run the animation
     if input.AnimOn
@@ -164,4 +122,7 @@ function [peak] = run_simulation(tis,input)
         clf                                         % clear fig
         animate_simple(t,z,p,speed)                 % run animation
     end
+
 end
+
+
