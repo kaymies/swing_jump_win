@@ -88,9 +88,9 @@ function qdot = discrete_impact_contact(z,p)
     c = 0.1;
     if z(2) < tha_lim0 && qdot(2) < 0
 %         qdot(2) = qdot(2) + (k * (tha_lim0 - z(2)) - c * z(6));
-%         qdot(2) = -1*qdot(2);
+        qdot(2) = -1*qdot(2);
         z(2) = tha_lim0 + 0.01;
-        qdot(2) = 0;
+%         qdot(2) = 0;
     elseif z(2) > tha_lim1 && qdot(2) > 0
         qdot(2) = 0;
         z(2) = tha_lim1 - 0.01;
@@ -207,16 +207,16 @@ function u = control_contacts(t,z)
         tauh = kH * (thh_lim0 - z(3)) - cH * z(7);
     end
 
-    %SG - Ankle joint spring limiter instead of hard contact - 29 Nov 2022
-%     tha_lim0 = deg2rad(30); %Minimum angle
-%     tha_lim1 = deg2rad(95); %Maximum
-%     kA = 1;
-%     cA = 0.0001;
-%     if z(2) > tha_lim1
-%         taua = kA * (tha_lim1 - z(2)) - cA * z(6);
-%     elseif z(2) <= tha_lim0
-%         taua = kA * (tha_lim0 - z(2)) - cA * z(6);
-%     end
+    %SG -  joint spring limiter instead of hard contact - 13 Nov 2022
+    thh_lim0 = deg2rad(180-143); %Minimum angle
+    thh_lim1 = deg2rad(180-106); %Maximum angle
+    kH = 100;
+    cH = 0.1;
+    if z(3) > thh_lim1
+        tauh = kH * (thh_lim1 - z(3)) - cH * z(7);
+    elseif z(3) <= thh_lim0
+        tauh = kH * (thh_lim0 - z(3)) - cH * z(7);
+    end
 
     u = [taua; tauh; taus];
 end

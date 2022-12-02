@@ -12,13 +12,17 @@ function [peak] = run_simulation(tis,input)
 
     p = parameters();                           % get parameters from file
 
+%     input.AnimOn = 1;
+%     input.PlotOn = 1;
+%     tis = 1;
+
     %Tip foot
-    z0 = [0.1318; -1.0472; 0.6454; -pi/2;...
+    z0 = [0.15; pi/2; 0.6454; -pi/2;...
           0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
 
-    % %Foot flat
-    % z0 = [0.2; 0; 0.64546; -pi/2;...
-    %       0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
+    %Foot flat
+%     z0 = [0.2; pi/2; 0.64546; -pi/2;...
+%           0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
 
     % z0 = [0.1; -pi/4; pi/4; pi/2;...
     %       0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
@@ -29,14 +33,15 @@ function [peak] = run_simulation(tis,input)
 
 
     % set guess
-    tf = 2;                                        % simulation final time
+    tf = 1;                                        % simulation final time
     ctrl.tih = 0.5;
     ctrl.tfh = 3;                                  % control time points for hip - updated KS
     ctrl.Th = [0.1 0.1];                               % control values for hip - updated KS
-    % ctrl.Th = [0 0];
-%     ctrl.tis = 1;
+%     ctrl.Th = [0 0];
     ctrl.tis = tis;
     ctrl.tfs = 1;                                  % control time points for shoulder - updated KS
+    ctrl.thsi = -pi/2;
+    ctrl.thsf = 3*pi/4;
     ctrl.Ts = [0.1 0.1];                               % control values for shoulder - updated KS
     % ctrl.Ts = [0 0];
 
@@ -64,7 +69,7 @@ function [peak] = run_simulation(tis,input)
 
     [t, z, u, indices] = hybrid_simulation(z0,ctrl,p,[0 tf]); % run simulation
     COM = COM_swing_jump_win(z,p);
-    [peak, t_peak] = find_first_peak(t,COM);
+    [peak, t_peak] = find_first_peak(t,z(1,:),COM,ctrl.tih,ctrl.tis);
     %% Plot COM for your submissions
     if input.PlotOn
         figure(1)
@@ -75,8 +80,13 @@ function [peak] = run_simulation(tis,input)
         title('Center of Mass Trajectory')
 
         figure(2); clf
+        yyaxis left
         plot(t,z(3,:))
-        title("Hip angle")
+        hold on
+        yyaxis right
+        plot(t,mod(z(4,:),2*pi))
+        title("Hip v arm angle")
+        legend("hip","arm")
 
         %UPDATED - EK 
         %03 Nov 2022 - max torque in leg and arm

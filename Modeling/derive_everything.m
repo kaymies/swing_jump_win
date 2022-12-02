@@ -36,7 +36,9 @@ jhat = [0; 1; 0];
 khat = cross(ihat,jhat);
 
 % Define other unit vectors for use in defining other vectors.
-er0hat = cos(-tha)*ihat - sin(-tha)*jhat;
+phi = thh - tha + pi;
+er0hat = -cos(phi)*ihat - sin(phi)*jhat;
+% er0hat = cos(tha)*ihat - sin(tha)*jhat; %Old version of ankle, globally defined
 er1hat =  -cos(thh)*ihat - sin(thh)*jhat;
 er2hat = cos(thh)*ihat - sin(thh)*jhat;
 er4hat = sin(ths)*ihat - cos(ths)*jhat;
@@ -103,8 +105,9 @@ T5 = (1/2)*m5*dot(drf, drf);
 % Define potential energies. See Lecture 6 formulas for gravitational 
 % potential energy of rigid bodies and elastic potential energies of
 % energy storage elements.
-gamma = pi - thh + tha;
-ls_current = sqrt(le1^2 + le2^2 - 2*le1*le2*cos(gamma));
+% gamma = pi - thh + tha;
+% ls_current = sqrt(le1^2 + le2^2 - 2*le1*le2*cos(gamma));
+ls_current = norm(re1 - re2);
 V0 = m0*g*dot(rc0, jhat) + 1/2*k*(ls0-ls_current)^2;
 V1 = m1*g*dot(rc1, jhat);
 V2 = m2*g*dot(rc2, jhat);
@@ -198,13 +201,13 @@ matlabFunction(ve1(1:2),'file',[directory 'v_heel_' name],'vars',{z p}); %heel v
 matlabFunction(Je1,'file',[directory 'J_heel_' name],'vars',{z p}); %heel Jacobian
 
 %Finger parameters
-Jf = jacobian(rf,q);
-Jf = Jf(1:2,1:4)
-inv(Jf
-vf = ddt(rf);
-rf
-matlabFunction(rf(1:2),'file',[directory 'r_finger_' name],'vars',{z p}); % position
-matlabFunction(vf(1:2),'file',[directory 'v_finger_' name],'vars',{z p}); % velocity
-matlabFunction(Jf,'file',[directory 'J_finger_' name],'vars',{z p}); % Jacobian
+% Jf = jacobian(rf,q);
+% Jf = Jf(1:2,1:4)
+% inv(Jf
+% vf = ddt(rf);
+% rf
+% matlabFunction(rf(1:2),'file',[directory 'r_finger_' name],'vars',{z p}); % position
+% matlabFunction(vf(1:2),'file',[directory 'v_finger_' name],'vars',{z p}); % velocity
+% matlabFunction(Jf,'file',[directory 'J_finger_' name],'vars',{z p}); % Jacobian
 
 
