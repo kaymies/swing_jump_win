@@ -2,7 +2,7 @@ function [peak_max, t_max] = find_first_peak(t,y,COM,tih,tis)
 
 % [peaks, locs] = findpeaks(y,t,"MinPeakHeight",0.18);
 t_window = 0.2;
-y_ground = 0.175; %y height for extended leg touching ground
+y_ground = 0.168; %y height for extended leg touching ground
 
 %Cut off y before tih
 i = find(t > tih);
@@ -52,14 +52,14 @@ end
 
 
 % 
-% if (rand < 0.1)
-%     figure
-%     plot(t,COM(2,:))
-    hold on
-    plot(t,y);
-    scatter(locs,peaks);
-    scatter(t_max,peak_max,'r*')
-    title(num2str(tis))
-% end
+% % if (rand < 0.1)
+% %     figure
+% %     plot(t,COM(2,:))
+%     hold on
+%     plot(t,y);
+%     scatter(locs,peaks);
+%     scatter(t_max,peak_max,'r*')
+%     title(num2str(tis))
+% % end
 
 end
