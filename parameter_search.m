@@ -1,12 +1,12 @@
 close all; clear all; clc;
 
-input.AnimOn = 1;
+input.AnimOn = 0;
 input.PlotOn = 0;
 input.k_curr = 0;
 input.dths = 0;
 
-k_curr = 4*70;
-input.k_curr = k_curr;
+% k_curr = 4*70;
+% input.k_curr = k_curr;
 
 
 % input.dths = dths;
@@ -19,7 +19,7 @@ ti = 0.5 - 0.12;
 tf = 0.5 + 0.17;
 
 tis = ti:0.001:tf;
-tis = 0.5 -0.045; %-0.073, -0.07, - 0.045, -0.018, -0.018, 0.015, 0.039
+% tis = 0.5 -0.066; %-0.073, -0.07, - 0.045, -0.018, -0.018, 0.015, 0.039
 % tis = tis(10);
 peaks = zeros(1,length(tis));
 for i = 1:length(tis)

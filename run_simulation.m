@@ -29,7 +29,7 @@ function [peak] = run_simulation(tis,input)
 
     dths = input.dths; %shoulder angular velocity
     thsi = -pi/2; %Initial shoulder angle
-    thsf = 3*pi/4; %Final shoulder angle
+    thsf = pi; %Final shoulder angle
 
     % set guess
     tf = 1;                       % simulation final time
