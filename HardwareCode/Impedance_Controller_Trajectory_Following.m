@@ -27,8 +27,9 @@ traj_time         = 5.0;
 pre_buffer_time   = 0; % this should be 0 for constant points, 2 for Bezier trajectories
 post_buffer_time  = 0;
 
-tis = 0.1; %shoulder start time
-tih = 0; %hip start time
+tidelta = -0.04;
+tih = 0.25; %hip start time
+tis = tih + tidelta; %shoulder start time
 tihend = 1.0;
 
 tipre = 0.01;
