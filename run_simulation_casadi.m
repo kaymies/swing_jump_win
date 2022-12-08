@@ -20,22 +20,23 @@ function [peak] = run_simulation(tis,input)
 %     input.PlotOn = 1;
 %     tis = 1;
 
+    % Fix torque input, hip start time, start and end angle, total simulation time
+    % Find state trajecotry, activation time of shoulder, and final control time
+      
+    z = opti.variable(8, N+1);  
+    ctrl.tf = opti.variable();
+    ctrl.tis = opti.variable();
+    
+    ctrl.tf = SX.sym('tf');
+    ctrl.tih = SX.sym('tih');
+    ctrl.tfh = SX.sym('tfh');
+    z = SX.sym('z');
+    
     %Tip foot
     z0 = [0.15; pi/2; 0.6454; -pi/2;...
           0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
-
-    %Foot flat
-%     z0 = [0.2; pi/2; 0.64546; -pi/2;...
-%           0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
-
-    % z0 = [0.1; -pi/4; pi/4; pi/2;...
-    %       0; 0; 0; 0];                    % set initial state [y, tha, thh, ths]
-
-    %         tauh = BezierCurve(ctrl.Th, t/ctrl.tfh); %EDIT LATER TO MATCH CONTROL LAW
-    %         %Arm control
-    %         taus = BezierCurve(ctrl.Ts, t/ctrl.tfs);
-
-
+      
+ 
     % set guess
     tf = 1;                                        % simulation final time
     ctrl.tih = 0.5;
@@ -48,7 +49,11 @@ function [peak] = run_simulation(tis,input)
     ctrl.thsf = 3*pi/4;
     ctrl.Ts = [0.1 0.1];                               % control values for shoulder - updated KS
     % ctrl.Ts = [0 0];
-
+    
+    
+    
+    opti.set_initial(speed, 1);
+    opti.set_initial(T, 1);
 
     % x = [tf, ctrl.tf, ctrl.T];
     % % setup and solve nonlinear programming problem
@@ -65,6 +70,11 @@ function [peak] = run_simulation(tis,input)
 
     % Note that once you've solved the optimization problem, you'll need to 
     % re-define tf, tfc, and ctrl here to reflect your solution.
+    
+    % ---- solve NLP              ------
+    opti.solver('ipopt'); % set numerical backend
+    sol = opti.solve();   % actual solve
+
 
     %Extract solved parameters
     % tf = x(1);
