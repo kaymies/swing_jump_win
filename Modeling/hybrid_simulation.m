@@ -88,9 +88,9 @@ function qdot = discrete_impact_contact(z,p)
     c = 0.1;
     if z(2) < tha_lim0 && qdot(2) < 0
 %         qdot(2) = qdot(2) + (k * (tha_lim0 - z(2)) - c * z(6));
-        qdot(2) = -1*qdot(2);
+%         qdot(2) = -1*qdot(2);
         z(2) = tha_lim0 + 0.01;
-%         qdot(2) = 0;
+        qdot(2) = 0;
     elseif z(2) > tha_lim1 && qdot(2) > 0
         qdot(2) = 0;
         z(2) = tha_lim1 - 0.01;
@@ -146,7 +146,14 @@ function u = control_laws(t,z,ctrl,iphase)
     %arm control is preserved. Adjusted in-ground control to output leg and
     %arm control curves.
 
+%         rpm_nl = 530; %RPM from Pololu data sheet
+%         tau_stall = 0.834; %N-m from Pololu data sheet
+%         omega_nl = rpm_nl*2*pi/60;
+%         inv_Kt = tau_stall/omega_nl;
+
+        tau_stall = 0.85; 
         inv_Kt = 0.0132;
+        scalar = 1; %0-1 magnitude scalar to scale down torques
         
         %Ankle control, irrelevant
         taua = 0;
@@ -154,19 +161,41 @@ function u = control_laws(t,z,ctrl,iphase)
         taus = 0;
         
         %Leg control
-        if t >= ctrl.tih 
-            tauh = -inv_Kt*z(7) + 0.85;
+        if t >= ctrl.tih
+            %Apply maximum effort
+            tauh = scalar*(tau_stall - inv_Kt*z(7));
         end
 
 
         %Arm control
-        Ks = 50;
-        bs = 0.5;
+        Ks = 2;
+        bs = 0.05;
+
+        % PD control to match specified functions for th and dth
+%         fun_th = ctrl.thsfun;
+%         fun_dth = ctrl.dthsfun;
+% 
+%         ths_target = fun_th(t);
+%         dths_target = fun_dth(t);
+
+%         taus = Ks*(ths_target - z(4)) + bs*(dths_target-z(8));
+%         taus_lim = scalar * (max(tau_stall - inv_Kt * abs(z(8)),0));
+
+%         if abs(taus) > taus_lim
+%             %cap off taus at limit;
+%             if taus < 0
+%                 taus = -1*taus_lim;
+%             else
+%                 taus = taus_lim;
+%             end
+%         end
+
+
         if t >= ctrl.tis 
             %Run shoulder with PD matching to final position
             taus = Ks*(ctrl.thsf - z(4)) + bs*(0-z(8));
 
-            taus_lim = max(-inv_Kt*abs(z(8)) + 0.85,0);
+            taus_lim = scalar * (max(tau_stall - inv_Kt * abs(z(8)),0));
 
             if abs(taus) > taus_lim
                 %cap off taus at limit;
@@ -180,7 +209,6 @@ function u = control_laws(t,z,ctrl,iphase)
             % Hold shoulder at init postn.
             taus = Ks*(ctrl.thsi - z(4))+ bs*(0-z(8)); 
         end
-
 
 
         %Create control vector
@@ -198,6 +226,7 @@ function u = control_contacts(t,z)
 
     %SG - hip joint spring limiter instead of hard contact - 13 Nov 2022
     thh_lim0 = deg2rad(180-143); %Minimum angle
+%     thh_lim0 = deg2rad(30); %Minimum angle
     thh_lim1 = deg2rad(180-106); %Maximum angle
     kH = 100;
     cH = 0.1;
@@ -207,5 +236,39 @@ function u = control_contacts(t,z)
         tauh = kH * (thh_lim0 - z(3)) - cH * z(7);
     end
 
+    %SG - Ankle joint spring limiter instead of hard contact - 29 Nov 2022
+%     tha_lim0 = deg2rad(30); %Minimum angle
+%     tha_lim1 = deg2rad(95); %Maximum
+%     kA = 1;
+%     cA = 0.0001;
+%     if z(2) > tha_lim1
+%         taua = kA * (tha_lim1 - z(2)) - cA * z(6);
+%     elseif z(2) <= tha_lim0
+%         taua = kA * (tha_lim0 - z(2)) - cA * z(6);
+%     end
+
     u = [taua; tauh; taus];
 end
+
+
+
+
+
+%%%% Scrap code
+
+                        %Get torque and rotation directions
+%             abs_rot_dir = sign(z(8)); %current rotation direction
+%             if abs_rot_dir == 0
+%                 abs_rot_dir = 1;
+%             end
+%             rel_torque_dir = sign(taus) * abs_rot_dir; %current torque direction relative to rotation - positive = same, negative = opposite, zero = irrelevant
+%             if rel_torque_dir == 0
+%                 rel_torque_dir = 1;
+%             end
+
+            % Calc motor torque limit. If going againts omega, than omega
+            % is "negative" and taus_lim will be greater than tau_stall. If
+            % going with omega and omega > omega_nl, then tau_lim is
+            % negative (i.e., the motor will actually resist forward
+            % motion).
+%             taus_lim = tau_stall - inv_Kt * rel_torque_dir * abs(z(8)); 
